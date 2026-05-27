@@ -1,4 +1,3 @@
-cat > ~/hope-africa-ai/index.html << 'ENDOFFILE'
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -121,6 +120,11 @@ cat > ~/hope-africa-ai/index.html << 'ENDOFFILE'
         #send-btn{background:linear-gradient(135deg,var(--green),var(--green2));color:white;border-radius:10px;width:36px;height:36px;font-size:16px;}
         #file-input{display:none;}
         ::-webkit-scrollbar{width:2px;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+ 
+        /* Erreur message */
+        .error-box{background:#1a0a0a;border:1px solid #ff4a4a44;border-radius:10px;padding:12px 16px;color:#ff6b6b;font-size:13px;line-height:1.5;}
+        .error-box a{color:var(--green3);}
+ 
         @media(max-width:900px){
             body{flex-direction:column;}
             #sidebar{position:fixed;top:0;left:-290px;bottom:0;width:290px;height:100%;height:-webkit-fill-available;transition:left 0.3s cubic-bezier(0.4,0,0.2,1);}
@@ -197,109 +201,138 @@ cat > ~/hope-africa-ai/index.html << 'ENDOFFILE'
     </div>
 </div>
 <script>
+    // ===== MANIFEST PWA =====
     const mf={name:"HAU Intelligence",short_name:"HAU IA",start_url:window.location.href,display:"standalone",orientation:"portrait-primary",background_color:"#060d1a",theme_color:"#1e6b3c",icons:[{src:"https://www.hau.bi/assets/img/hope/header_logo.png",sizes:"192x192",type:"image/png",purpose:"any maskable"},{src:"https://www.hau.bi/assets/img/hope/header_logo.png",sizes:"512x512",type:"image/png",purpose:"any maskable"}]};
     document.getElementById('pwa-manifest').href="data:application/manifest+json,"+encodeURIComponent(JSON.stringify(mf));
-
-    // ===== METS TA CLE ICI =====
+ 
+    // ===== CLE API — REMPLACEZ PAR UNE NOUVELLE CLE SUR console.groq.com =====
     const GROQ_KEY = "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";
-    // ===========================
-
-    let langue=localStorage.getItem('hau_langue')||'fr';
-    document.getElementById('lang-btn').innerText='🌍 '+langue.toUpperCase();
-
-    let installPrompt=null;
-    window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;document.getElementById('btn-install').style.display='flex';});
-    function installer(){if(installPrompt){installPrompt.prompt();installPrompt.userChoice.then(r=>{if(r.outcome==='accepted')document.getElementById('btn-install').style.display='none';installPrompt=null;});}}
-
-    function installerMobile(){
-        const ua=navigator.userAgent.toLowerCase();
-        const lien=window.location.href;
-        if(installPrompt){installer();return;}
-        if(/iphone|ipad|ipod/.test(ua)){alert('📱 iPhone/iPad :\n\n1. Ouvrez dans Safari\n2. Bouton Partager ⬆️\n3. "Sur l\'écran d\'accueil"\n4. "Ajouter"');}
-        else if(/android/.test(ua)){navigator.clipboard.writeText(lien).then(()=>{alert('🤖 Android :\n\n1. Ouvrez Chrome\n2. Collez le lien\n3. ⋮ → "Ajouter à l\'écran d\'accueil"');}).catch(()=>{alert('Lien : '+lien);});}
-        else{navigator.clipboard.writeText(lien).then(()=>{alert('✅ Lien copié !');});}
+    // =========================================================================
+ 
+    let langue = localStorage.getItem('hau_langue') || 'fr';
+    document.getElementById('lang-btn').innerText = '🌍 ' + langue.toUpperCase();
+ 
+    // ===== PWA INSTALL =====
+    let installPrompt = null;
+    window.addEventListener('beforeinstallprompt', e => {
+        e.preventDefault(); installPrompt = e;
+        document.getElementById('btn-install').style.display = 'flex';
+    });
+    function installer() {
+        if (installPrompt) {
+            installPrompt.prompt();
+            installPrompt.userChoice.then(r => {
+                if (r.outcome === 'accepted') document.getElementById('btn-install').style.display = 'none';
+                installPrompt = null;
+            });
+        }
     }
-
-    function changerLangue(){
-        langue=langue==='fr'?'en':'fr';
-        localStorage.setItem('hau_langue',langue);
-        document.getElementById('lang-btn').innerText='🌍 '+langue.toUpperCase();
-        document.getElementById('msg-input').placeholder=langue==='fr'?'Posez votre question...':'Ask your question...';
-        addBot(langue==='fr'?'✅ Langue changée en **Français**.':'✅ Language changed to **English**.');
+    function installerMobile() {
+        const ua = navigator.userAgent.toLowerCase();
+        const lien = window.location.href;
+        if (installPrompt) { installer(); return; }
+        if (/iphone|ipad|ipod/.test(ua)) {
+            alert('📱 iPhone/iPad :\n\n1. Ouvrez dans Safari\n2. Bouton Partager ⬆️\n3. "Sur l\'écran d\'accueil"\n4. "Ajouter"');
+        } else if (/android/.test(ua)) {
+            navigator.clipboard.writeText(lien).then(() => {
+                alert('🤖 Android :\n\n1. Ouvrez Chrome\n2. Collez le lien\n3. ⋮ → "Ajouter à l\'écran d\'accueil"');
+            }).catch(() => { alert('Lien : ' + lien); });
+        } else {
+            navigator.clipboard.writeText(lien).then(() => { alert('✅ Lien copié !'); });
+        }
     }
-
-    function telecharger(){
-        try{
-            const blob=new Blob([`<!DOCTYPE html>\n${document.documentElement.outerHTML}`],{type:'text/html;charset=utf-8'});
-            const url=URL.createObjectURL(blob);
-            const a=document.createElement('a');a.href=url;a.download='HAU_Intelligence.html';
-            document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
-        }catch(e){alert('Erreur téléchargement.');}
+ 
+    function changerLangue() {
+        langue = langue === 'fr' ? 'en' : 'fr';
+        localStorage.setItem('hau_langue', langue);
+        document.getElementById('lang-btn').innerText = '🌍 ' + langue.toUpperCase();
+        document.getElementById('msg-input').placeholder = langue === 'fr' ? 'Posez votre question...' : 'Ask your question...';
+        addBot(langue === 'fr' ? '✅ Langue changée en **Français**.' : '✅ Language changed to **English**.');
     }
-
-    const sidebar=document.getElementById('sidebar');
-    function ouvrir(){sidebar.classList.add('open');document.getElementById('overlay').classList.add('open');}
-    function fermer(){sidebar.classList.remove('open');document.getElementById('overlay').classList.remove('open');}
-
-    marked.setOptions({gfm:true,breaks:true});
-    const msgDiv=document.getElementById('messages');
-    const input=document.getElementById('msg-input');
-    const typing=document.getElementById('typing');
-    const typingText=document.getElementById('typing-text');
-    const histDiv=document.getElementById('historique');
-    let historique=[];
-    let sessions=JSON.parse(localStorage.getItem('hau_sessions')||'[]');
-    let fichierJoint=null,fichierBase64=null;
-
-    function heure(){return new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});}
-
-    function affSessions(){
-        histDiv.innerHTML='';
-        sessions.slice().reverse().forEach((s,i)=>{
-            const idx=sessions.length-1-i;
-            histDiv.innerHTML+=`<div class="session" onclick="charger(${idx});fermer();">💬<div class="sess-inner"><div class="sess-title">${s.titre}</div><div class="sess-date">${s.date||''}</div></div></div>`;
+ 
+    function telecharger() {
+        try {
+            const blob = new Blob([`<!DOCTYPE html>\n${document.documentElement.outerHTML}`], {type: 'text/html;charset=utf-8'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = 'HAU_Intelligence.html';
+            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+        } catch(e) { alert('Erreur téléchargement.'); }
+    }
+ 
+    // ===== SIDEBAR =====
+    const sidebar = document.getElementById('sidebar');
+    function ouvrir() { sidebar.classList.add('open'); document.getElementById('overlay').classList.add('open'); }
+    function fermer() { sidebar.classList.remove('open'); document.getElementById('overlay').classList.remove('open'); }
+ 
+    // ===== MARKED =====
+    marked.setOptions({gfm: true, breaks: true});
+ 
+    const msgDiv = document.getElementById('messages');
+    const input = document.getElementById('msg-input');
+    const typing = document.getElementById('typing');
+    const typingText = document.getElementById('typing-text');
+    const histDiv = document.getElementById('historique');
+ 
+    let historique = [];
+    let sessions = JSON.parse(localStorage.getItem('hau_sessions') || '[]');
+    let fichierJoint = null, fichierBase64 = null;
+ 
+    function heure() { return new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'}); }
+ 
+    function affSessions() {
+        histDiv.innerHTML = '';
+        sessions.slice().reverse().forEach((s, i) => {
+            const idx = sessions.length - 1 - i;
+            histDiv.innerHTML += `<div class="session" onclick="charger(${idx});fermer();">💬<div class="sess-inner"><div class="sess-title">${s.titre}</div><div class="sess-date">${s.date || ''}</div></div></div>`;
         });
     }
-
-    function charger(i){
-        historique=sessions[i].messages;msgDiv.innerHTML='';
-        historique.forEach(m=>{if(m.role==='user')addUser(m.content);if(m.role==='assistant')addBot(m.content);});
+ 
+    function charger(i) {
+        historique = sessions[i].messages; msgDiv.innerHTML = '';
+        historique.forEach(m => { if (m.role === 'user') addUser(m.content); if (m.role === 'assistant') addBot(m.content); });
     }
-
-    function nouveau(){
-        if(historique.length>0){
-            const p=historique.find(m=>m.role==='user');
-            sessions.push({titre:p?p.content.substring(0,25)+'...':'Discussion',date:new Date().toLocaleDateString('fr-FR'),messages:historique});
-            localStorage.setItem('hau_sessions',JSON.stringify(sessions));affSessions();
+ 
+    function nouveau() {
+        if (historique.length > 0) {
+            const p = historique.find(m => m.role === 'user');
+            sessions.push({titre: p ? p.content.substring(0, 25) + '...' : 'Discussion', date: new Date().toLocaleDateString('fr-FR'), messages: historique});
+            localStorage.setItem('hau_sessions', JSON.stringify(sessions)); affSessions();
         }
-        historique=[];msgDiv.innerHTML='';bienvenue();
+        historique = []; msgDiv.innerHTML = ''; bienvenue();
     }
-
-    function addUser(texte){
-        msgDiv.innerHTML+=`<div class="msg-user"><div class="bubble-user">${texte}</div><div class="msg-time">${heure()}</div></div>`;
-        msgDiv.scrollTop=msgDiv.scrollHeight;
+ 
+    function addUser(texte) {
+        msgDiv.innerHTML += `<div class="msg-user"><div class="bubble-user">${texte}</div><div class="msg-time">${heure()}</div></div>`;
+        msgDiv.scrollTop = msgDiv.scrollHeight;
     }
-
-    function addBot(contenu){
-        let pensee='',rep=contenu;
-        if(contenu.includes('<thought>')&&contenu.includes('</thought>')){
-            pensee=contenu.split('</thought>')[0].replace('<thought>','').trim();
-            rep=contenu.split('</thought>')[1].trim();
+ 
+    function addBot(contenu) {
+        let pensee = '', rep = contenu;
+        if (contenu.includes('<thought>') && contenu.includes('</thought>')) {
+            pensee = contenu.split('</thought>')[0].replace('<thought>', '').trim();
+            rep = contenu.split('</thought>')[1].trim();
         }
-        const id='w'+Date.now()+Math.random().toString(36).substr(2,3);
-        const logo='https://www.hau.bi/assets/img/hope/header_logo.png';
-        msgDiv.innerHTML+=`<div class="msg-bot"><img class="hau-av" src="${logo}" alt="HAU" onerror="this.style.background='#1e6b3c'"><div class="bot-wrap" id="${id}"></div></div>`;
-        const w=document.getElementById(id);
-        if(pensee)w.innerHTML+=`<details class="thought-block"><summary>🧠 Raisonnement</summary><div>${marked.parse(pensee)}</div></details>`;
-        w.innerHTML+=`<div class="bubble-bot">${marked.parse(rep)}</div><div class="msg-time">${heure()}</div>`;
-        msgDiv.scrollTop=msgDiv.scrollHeight;
+        const id = 'w' + Date.now() + Math.random().toString(36).substr(2, 3);
+        const logo = 'https://www.hau.bi/assets/img/hope/header_logo.png';
+        msgDiv.innerHTML += `<div class="msg-bot"><img class="hau-av" src="${logo}" alt="HAU" onerror="this.style.background='#1e6b3c'"><div class="bot-wrap" id="${id}"></div></div>`;
+        const w = document.getElementById(id);
+        if (pensee) w.innerHTML += `<details class="thought-block"><summary>🧠 Raisonnement</summary><div>${marked.parse(pensee)}</div></details>`;
+        w.innerHTML += `<div class="bubble-bot">${marked.parse(rep)}</div><div class="msg-time">${heure()}</div>`;
+        msgDiv.scrollTop = msgDiv.scrollHeight;
     }
-
-    function qr(q){fermer();input.value=q;envoyer();}
-
-    function bienvenue(){
-        const logo='https://www.hau.bi/assets/img/hope/header_logo.png';
-        msgDiv.innerHTML=`
+ 
+    function addErreur(msg) {
+        const logo = 'https://www.hau.bi/assets/img/hope/header_logo.png';
+        const id = 'e' + Date.now();
+        msgDiv.innerHTML += `<div class="msg-bot"><img class="hau-av" src="${logo}" alt="HAU" onerror="this.style.background='#1e6b3c'"><div class="bot-wrap"><div class="error-box">${msg}</div><div class="msg-time">${heure()}</div></div></div>`;
+        msgDiv.scrollTop = msgDiv.scrollHeight;
+    }
+ 
+    function qr(q) { fermer(); input.value = q; envoyer(); }
+ 
+    function bienvenue() {
+        const logo = 'https://www.hau.bi/assets/img/hope/header_logo.png';
+        msgDiv.innerHTML = `
         <div class="welcome-card">
             <img class="wc-logo" src="${logo}" alt="HAU Logo" onerror="this.style.display='none'">
             <div class="wc-title">HAU Intelligence</div>
@@ -317,122 +350,176 @@ cat > ~/hope-africa-ai/index.html << 'ENDOFFILE'
             </div>
         </div>`;
     }
-
-    function gererFichier(inp){
-        if(inp.files&&inp.files[0]){
-            fichierJoint=inp.files[0];
-            const reader=new FileReader();
-            reader.onload=e=>{
-                fichierBase64=e.target.result;
-                const prev=document.getElementById('file-preview');
-                prev.innerHTML=`<div class="prev-badge">📄 ${fichierJoint.name.substring(0,20)} <span onclick="retirerFichier()">✕</span></div>`;
-                prev.style.display='flex';
+ 
+    // ===== FICHIER IMAGE =====
+    function gererFichier(inp) {
+        if (inp.files && inp.files[0]) {
+            fichierJoint = inp.files[0];
+            const reader = new FileReader();
+            reader.onload = e => {
+                fichierBase64 = e.target.result;
+                const prev = document.getElementById('file-preview');
+                prev.innerHTML = `<div class="prev-badge">📄 ${fichierJoint.name.substring(0,20)} <span onclick="retirerFichier()">✕</span></div>`;
+                prev.style.display = 'flex';
             };
             reader.readAsDataURL(fichierJoint);
         }
     }
-
-    function retirerFichier(){
-        fichierJoint=null;fichierBase64=null;
-        document.getElementById('file-input').value='';
-        document.getElementById('file-preview').style.display='none';
+ 
+    function retirerFichier() {
+        fichierJoint = null; fichierBase64 = null;
+        document.getElementById('file-input').value = '';
+        document.getElementById('file-preview').style.display = 'none';
     }
-
-    async function analyserImage(texte,b64,mime){
-        typingText.innerText='Analyse du document...';typing.style.display='flex';
-        try{
-            const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
-                method:'POST',
-                headers:{'Content-Type':'application/json','Authorization':`Bearer ${GROQ_KEY}`},
-                body:JSON.stringify({
-                    model:'meta-llama/llama-4-scout-17b-16e-instruct',
-                    messages:[{role:'user',content:[
-                        {type:'text',text:texte||`En tant qu'assistant académique de HAU, analyse ce document ou cette image de façon professionnelle et détaillée en ${langue==='fr'?'français':'anglais'}.`},
-                        {type:'image_url',image_url:{url:`data:${mime};base64,${b64}`}}
+ 
+    // ===== ANALYSE IMAGE =====
+    async function analyserImage(texte, b64, mime) {
+        typingText.innerText = 'Analyse du document...'; typing.style.display = 'flex';
+        try {
+            const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_KEY}`},
+                body: JSON.stringify({
+                    model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+                    messages: [{role: 'user', content: [
+                        {type: 'text', text: texte || `En tant qu'assistant académique de HAU, analyse ce document ou cette image de façon professionnelle et détaillée en ${langue === 'fr' ? 'français' : 'anglais'}.`},
+                        {type: 'image_url', image_url: {url: `data:${mime};base64,${b64}`}}
                     ]}],
-                    max_tokens:1500
+                    max_tokens: 1500
                 })
             });
-            const data=await res.json();
-            typing.style.display='none';
-            if(data.choices&&data.choices[0]){
-                const rep=data.choices[0].message.content;
-                historique.push({role:'user',content:texte||'Analyse ce document'});
-                historique.push({role:'assistant',content:rep});
-                addBot(rep);sauvegarder(texte||'Analyse document');
-            }else{addBot("Impossible d'analyser ce document.");}
-        }catch(e){typing.style.display='none';addBot("Erreur d'analyse. Vérifiez votre connexion.");}
+            typing.style.display = 'none';
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                const msg = err.error?.message || `Erreur ${res.status}`;
+                if (res.status === 401) addErreur('🔑 Clé API invalide ou expirée. <a href="https://console.groq.com" target="_blank">Obtenez une nouvelle clé sur console.groq.com</a>');
+                else if (res.status === 429) addErreur('⏳ Limite de requêtes atteinte. Attendez quelques secondes et réessayez.');
+                else addErreur('❌ Erreur API : ' + msg);
+                return;
+            }
+            const data = await res.json();
+            if (data.choices && data.choices[0]) {
+                const rep = data.choices[0].message.content;
+                historique.push({role: 'user', content: texte || 'Analyse ce document'});
+                historique.push({role: 'assistant', content: rep});
+                addBot(rep); sauvegarder(texte || 'Analyse document');
+            } else {
+                addErreur("Impossible d'analyser ce document. Réponse inattendue.");
+            }
+        } catch(e) {
+            typing.style.display = 'none';
+            addErreur('🌐 Connexion impossible. Vérifiez votre internet et réessayez.');
+        }
     }
-
-    function detectImg(t){return['génère','generate','dessine','create','imagine','draw','peins','fais une image'].some(m=>t.toLowerCase().includes(m));}
-
-    async function genererImage(prompt){
-        typingText.innerText="Génération de l'image...";typing.style.display='flex';
-        const clean=prompt.replace(/génère|generate|dessine|create|imagine|draw|peins|fais une image/gi,'').replace(/une image de|an image of|une photo de/gi,'').trim();
-        const url=`https://image.pollinations.ai/prompt/${encodeURIComponent(clean+', professional, academic, university, high quality, 8k')}?width=1024&height=1024&nologo=true&model=flux`;
-        typing.style.display='none';
+ 
+    function detectImg(t) {
+        return ['génère','generate','dessine','create','imagine','draw','peins','fais une image'].some(m => t.toLowerCase().includes(m));
+    }
+ 
+    // ===== GÉNÉRATION IMAGE =====
+    async function genererImage(prompt) {
+        typingText.innerText = "Génération de l'image..."; typing.style.display = 'flex';
+        const clean = prompt.replace(/génère|generate|dessine|create|imagine|draw|peins|fais une image/gi,'').replace(/une image de|an image of|une photo de/gi,'').trim();
+        const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(clean + ', professional, academic, university, high quality, 8k')}?width=1024&height=1024&nologo=true&model=flux`;
+        typing.style.display = 'none';
         addUser(prompt);
-        const logo='https://www.hau.bi/assets/img/hope/header_logo.png';
-        msgDiv.innerHTML+=`<div class="msg-bot"><img class="hau-av" src="${logo}" alt="HAU" onerror="this.style.background='#1e6b3c'"><div class="bot-wrap"><div class="gen-img-wrap"><div class="gen-img-label">✦ Image générée par HAU IA</div><img class="gen-img" src="${url}" loading="lazy" onclick="window.open('${url}','_blank')"><div class="img-actions"><a class="img-btn" href="${url}" download="HAU-IA.png" target="_blank">⬇ Télécharger</a><a class="img-btn" href="${url}" target="_blank">🔍 Plein écran</a></div></div><div class="msg-time">${heure()}</div></div></div>`;
-        msgDiv.scrollTop=msgDiv.scrollHeight;
-        historique.push({role:'user',content:prompt});
-        historique.push({role:'assistant',content:`[Image: ${clean}]`});
+        const logo = 'https://www.hau.bi/assets/img/hope/header_logo.png';
+        msgDiv.innerHTML += `<div class="msg-bot"><img class="hau-av" src="${logo}" alt="HAU" onerror="this.style.background='#1e6b3c'"><div class="bot-wrap"><div class="gen-img-wrap"><div class="gen-img-label">✦ Image générée par HAU IA</div><img class="gen-img" src="${url}" loading="lazy" onclick="window.open('${url}','_blank')"><div class="img-actions"><a class="img-btn" href="${url}" download="HAU-IA.png" target="_blank">⬇ Télécharger</a><a class="img-btn" href="${url}" target="_blank">🔍 Plein écran</a></div></div><div class="msg-time">${heure()}</div></div></div>`;
+        msgDiv.scrollTop = msgDiv.scrollHeight;
+        historique.push({role: 'user', content: prompt});
+        historique.push({role: 'assistant', content: `[Image: ${clean}]`});
         sauvegarder(prompt);
     }
-
-    function sauvegarder(texte){
-        if(historique.length===2){
-            sessions.push({titre:texte.substring(0,25)+'...',date:new Date().toLocaleDateString('fr-FR'),messages:historique});
-            localStorage.setItem('hau_sessions',JSON.stringify(sessions));affSessions();
-        }else if(sessions.length>0){
-            sessions[sessions.length-1].messages=historique;
-            localStorage.setItem('hau_sessions',JSON.stringify(sessions));
+ 
+    function sauvegarder(texte) {
+        if (historique.length === 2) {
+            sessions.push({titre: texte.substring(0,25)+'...', date: new Date().toLocaleDateString('fr-FR'), messages: historique});
+            localStorage.setItem('hau_sessions', JSON.stringify(sessions)); affSessions();
+        } else if (sessions.length > 0) {
+            sessions[sessions.length-1].messages = historique;
+            localStorage.setItem('hau_sessions', JSON.stringify(sessions));
         }
     }
-
-    async function envoyer(){
-        const texte=input.value.trim();
-        if(!texte&&!fichierJoint)return;
-        input.value='';
-        if(fichierJoint&&fichierBase64){
-            const b64=fichierBase64.split(',')[1],mime=fichierJoint.type;
-            msgDiv.innerHTML+=`<div class="msg-user"><div class="bubble-user"><img class="analyzed-img" src="${fichierBase64}"><br>${texte||'Analyse ce document'}</div><div class="msg-time">${heure()}</div></div>`;
-            msgDiv.scrollTop=msgDiv.scrollHeight;retirerFichier();
-            await analyserImage(texte,b64,mime);return;
+ 
+    // ===== ENVOI MESSAGE =====
+    async function envoyer() {
+        const texte = input.value.trim();
+        if (!texte && !fichierJoint) return;
+        input.value = '';
+ 
+        // Image jointe
+        if (fichierJoint && fichierBase64) {
+            const b64 = fichierBase64.split(',')[1], mime = fichierJoint.type;
+            msgDiv.innerHTML += `<div class="msg-user"><div class="bubble-user"><img class="analyzed-img" src="${fichierBase64}"><br>${texte || 'Analyse ce document'}</div><div class="msg-time">${heure()}</div></div>`;
+            msgDiv.scrollTop = msgDiv.scrollHeight;
+            retirerFichier();
+            await analyserImage(texte, b64, mime);
+            return;
         }
-        if(detectImg(texte)){await genererImage(texte);return;}
+ 
+        // Génération image
+        if (detectImg(texte)) { await genererImage(texte); return; }
+ 
         addUser(texte);
-        historique.push({role:'user',content:texte});
-        typingText.innerText='HAU Intelligence réfléchit...';typing.style.display='flex';
-        try{
-            const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
-                method:'POST',
-                headers:{'Content-Type':'application/json','Authorization':`Bearer ${GROQ_KEY}`},
-                body:JSON.stringify({
-                    model:'llama-3.3-70b-versatile',
-                    messages:[
-                        {role:'system',content:`Tu es HAU Intelligence, l'assistant académique officiel de Hope Africa University (HAU) — Université Espoir d'Afrique, université chrétienne privée à Bujumbura, Burundi.
+        historique.push({role: 'user', content: texte});
+        typingText.innerText = 'HAU Intelligence réfléchit...'; typing.style.display = 'flex';
+ 
+        try {
+            const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_KEY}`},
+                body: JSON.stringify({
+                    model: 'llama-3.3-70b-versatile',
+                    messages: [
+                        {role: 'system', content: `Tu es HAU Intelligence, l'assistant académique officiel de Hope Africa University (HAU) — Université Espoir d'Afrique, université chrétienne privée à Bujumbura, Burundi.
 INFOS HAU : Fondée 2000 par Rév. Elie Buconyori | Recteur: Rév. Dr Col de Police Servilien Nitunga | Campus: Ngagara, Gishingano, Gitega | info@hau.bi | (+257) 22237973 | hau.bi
 FACULTÉS: Médecine, Soins infirmiers, Anesthésie, Dentisterie, Droit, Sciences politiques, Économie, Administration, MBA, Informatique, Génie civil, Théologie, Communication, Psychologie, Agriculture, Entrepreneuriat
 SERVICES: E-Learning (edu.hau.bi), MIS (mis.hau.bi), Journal (journal.hau.bi), Bibliothèque (stumis.hau.bi)
-LANGUE: ${langue==='fr'?'FRANÇAIS':'ENGLISH'}
+LANGUE: ${langue === 'fr' ? 'FRANÇAIS' : 'ENGLISH'}
 CAPACITÉS: Répondre questions HAU, rédiger mémoires/dissertations jusqu'à 30 pages, analyser documents, informer sur inscriptions/bourses/frais, générer emplois du temps, orienter étudiants, aider toutes matières, recherche scientifique.
 Sois professionnel, précis et bienveillant. Utilise <thought></thought> si nécessaire.`},
                         ...historique
                     ],
-                    max_tokens:4000,temperature:0.45
+                    max_tokens: 4000,
+                    temperature: 0.45
                 })
             });
-            const data=await res.json();
-            const rep=data.choices[0].message.content;
-            historique.push({role:'assistant',content:rep});
-            typing.style.display='none';addBot(rep);sauvegarder(texte);
-        }catch(e){typing.style.display='none';addBot("Connexion interrompue. Veuillez réessayer.");}
+ 
+            typing.style.display = 'none';
+ 
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                historique.pop(); // retirer le message user qui n'a pas eu de réponse
+                if (res.status === 401) {
+                    addErreur('🔑 <strong>Clé API invalide ou expirée.</strong><br>Obtenez une nouvelle clé gratuite sur <a href="https://console.groq.com" target="_blank">console.groq.com</a> et mettez-la à jour dans le fichier index.html');
+                } else if (res.status === 429) {
+                    addErreur('⏳ Limite de requêtes atteinte. Attendez quelques secondes et réessayez.');
+                } else if (res.status === 400) {
+                    addErreur('❌ Requête invalide. Reformulez votre question.');
+                } else {
+                    addErreur(`❌ Erreur serveur (${res.status}). Réessayez dans quelques instants.`);
+                }
+                return;
+            }
+ 
+            const data = await res.json();
+            if (data.choices && data.choices[0]) {
+                const rep = data.choices[0].message.content;
+                historique.push({role: 'assistant', content: rep});
+                addBot(rep); sauvegarder(texte);
+            } else {
+                addErreur('Réponse inattendue du serveur. Réessayez.');
+            }
+        } catch(e) {
+            typing.style.display = 'none';
+            historique.pop();
+            addErreur('🌐 <strong>Connexion interrompue.</strong><br>Vérifiez votre connexion internet et réessayez.');
+        }
     }
-
-    input.addEventListener('keypress',e=>{if(e.key==='Enter'&&!e.shiftKey)envoyer();});
-    affSessions();bienvenue();
+ 
+    input.addEventListener('keypress', e => { if (e.key === 'Enter' && !e.shiftKey) envoyer(); });
+    affSessions();
+    bienvenue();
 </script>
 </body>
 </html>
-
