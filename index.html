@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -262,7 +261,11 @@
         #msg-input::placeholder { color:var(--text3); }
         .ibtn { background:transparent; border:none; color:var(--text3); width:38px; height:38px; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
         .ibtn:active { background:var(--bg4); color:#fff; }
-        #send-btn { background:var(--green); color:white; border-radius:10px; width:36px; height:36px; font-size:16px; }
+        #send-btn { background:var(--green); color:white; border-radius:10px; width:36px; height:36px; font-size:16px; transition:opacity 0.2s; }
+        #send-btn:disabled { opacity:0.35; cursor:not-allowed; }
+        .retry-btn { margin-top:8px; background:#1a2a0a; border:1px solid #3a5a1a; color:#7aba3a; padding:7px 16px; border-radius:8px; font-size:12px; cursor:pointer; display:inline-flex; align-items:center; gap:6px; font-weight:600; }
+        .retry-btn:active { opacity:0.8; }
+        .countdown { font-size:11px; color:var(--text3); margin-top:4px; }
         #file-input { display:none; }
 
         ::-webkit-scrollbar { width:2px; }
@@ -661,20 +664,23 @@
         return await res.json();
     }
 
-    function gererErreurGroq(err) {
-        typing.style.display = 'none';
-        const msg = err.message || '';
-        if (msg === 'CLE_INVALIDE') {
-            addErreur('<b>Cle API invalide ou expiree.</b><br>Votre cle Groq ne fonctionne pas.<br><button class="err-key-btn" onclick="changerCle()">Changer la cle</button>');
-        } else if (msg === 'LIMITE_ATTEINTE') {
-            addErreur('<b>Limite de requetes atteinte (429).</b><br>Le plan gratuit Groq a une limite par minute. Attendez 30 secondes et reessayez.');
-        } else if (msg.startsWith('REQUETE_INVALIDE')) {
-            addErreur('<b>Requete invalide (400).</b><br>' + msg.replace('REQUETE_INVALIDE: ',''));
-        } else if (msg.includes('Failed to fetch') || msg.includes('NetworkError') || msg.includes('Load failed')) {
-            addErreur('<b>Pas de connexion internet.</b><br>Verifiez votre connexion et reessayez.');
-        } else {
-            addErreur('<b>Erreur inattendue :</b> ' + msg + '<br><small>Verifiez votre cle Groq sur console.groq.com</small>');
-        }
+    let estEnTrain = false;
+
+    function verrouiller() {
+        estEnTrain = true;
+        const btn = document.getElementById('send-btn');
+        btn.disabled = true;
+        btn.innerHTML = '&#9679;';
+        input.disabled = true;
+    }
+
+    function deverrouiller() {
+        estEnTrain = false;
+        const btn = document.getElementById('send-btn');
+        btn.disabled = false;
+        btn.innerHTML = '&#10148;';
+        input.disabled = false;
+        input.focus();
     }
 
     function changerCle() {
@@ -683,29 +689,43 @@
         demanderCle('Entrez une nouvelle cle API Groq valide (commence par gsk_) :');
     }
 
-    // ─── Analyse image ───
-    async function analyserImage(texte, b64, mime) {
-        typingText.innerText = 'Analyse du document...';
-        typing.style.display = 'flex';
-        try {
-            const data = await appelGroq([{
-                role: 'user',
-                content: [
-                    { type: 'text', text: texte || ('En tant qu assistant academique de HAU, analyse ce document de facon professionnelle en ' + (langue === 'fr' ? 'francais' : 'anglais') + '.') },
-                    { type: 'image_url', image_url: { url: 'data:' + mime + ';base64,' + b64 } }
-                ]
-            }], 'meta-llama/llama-4-scout-17b-16e-instruct', 1500);
-
-            typing.style.display = 'none';
-            if (data && data.choices && data.choices[0]) {
-                const rep = data.choices[0].message.content;
-                historique.push({role:'user', content: texte || 'Analyse ce document'});
-                historique.push({role:'assistant', content: rep});
-                addBot(rep);
-                sauvegarder(texte || 'Analyse document');
+    function reessayerApres(texte, secondes) {
+        // Affiche un compte a rebours puis remet le texte dans l'input
+        const dernierMsg = msgDiv.lastElementChild;
+        const cntDiv = document.createElement('div');
+        cntDiv.className = 'countdown';
+        if (dernierMsg) dernierMsg.querySelector('.bot-wrap')?.appendChild(cntDiv);
+        let restant = secondes;
+        cntDiv.innerText = 'Reessayez dans ' + restant + 's...';
+        const t = setInterval(() => {
+            restant--;
+            if (restant <= 0) {
+                clearInterval(t);
+                cntDiv.innerText = '';
+                input.value = texte;
+                deverrouiller();
+            } else {
+                cntDiv.innerText = 'Reessayez dans ' + restant + 's...';
             }
-        } catch(e) {
-            gererErreurGroq(e);
+        }, 1000);
+    }
+
+    function gererErreurGroq(err, texteOriginal) {
+        typing.style.display = 'none';
+        deverrouiller();
+        const msg = err.message || '';
+        if (msg === 'CLE_INVALIDE') {
+            addErreur('<b>Cle API invalide ou expiree.</b><br>Votre cle Groq ne fonctionne pas.<br><button class="err-key-btn" onclick="changerCle()">&#128273; Changer la cle</button>');
+        } else if (msg === 'LIMITE_ATTEINTE') {
+            addErreur('<b>Limite Groq atteinte (429).</b><br>Trop de requetes en peu de temps. Le message sera remis automatiquement dans 35 secondes.');
+            verrouiller();
+            reessayerApres(texteOriginal || '', 35);
+        } else if (msg.startsWith('REQUETE_INVALIDE')) {
+            addErreur('<b>Requete invalide (400).</b><br>' + msg.replace('REQUETE_INVALIDE: ',''));
+        } else if (msg.includes('Failed to fetch') || msg.includes('NetworkError') || msg.includes('Load failed')) {
+            addErreur('<b>Pas de connexion internet.</b><br>Verifiez votre connexion et reessayez.');
+        } else {
+            addErreur('<b>Erreur :</b> ' + msg + '<br><small>Verifiez votre cle sur console.groq.com</small>');
         }
     }
 
@@ -754,8 +774,36 @@
         }
     }
 
+    // ─── Analyse image ─── (mise a jour avec verrouillage)
+    async function analyserImage(texte, b64, mime) {
+        typingText.innerText = 'Analyse du document...';
+        typing.style.display = 'flex';
+        verrouiller();
+        try {
+            const data = await appelGroq([{
+                role: 'user',
+                content: [
+                    { type: 'text', text: texte || ('En tant qu assistant academique de HAU, analyse ce document de facon professionnelle en ' + (langue === 'fr' ? 'francais' : 'anglais') + '.') },
+                    { type: 'image_url', image_url: { url: 'data:' + mime + ';base64,' + b64 } }
+                ]
+            }], 'meta-llama/llama-4-scout-17b-16e-instruct', 1500);
+            typing.style.display = 'none';
+            deverrouiller();
+            if (data && data.choices && data.choices[0]) {
+                const rep = data.choices[0].message.content;
+                historique.push({role:'user', content: texte || 'Analyse ce document'});
+                historique.push({role:'assistant', content: rep});
+                addBot(rep);
+                sauvegarder(texte || 'Analyse document');
+            }
+        } catch(e) {
+            gererErreurGroq(e, texte);
+        }
+    }
+
     // ─── Envoi message ───
     async function envoyer() {
+        if (estEnTrain) return; // bloquer double envoi
         const texte = input.value.trim();
         if (!texte && !fichierJoint) return;
         input.value = '';
@@ -774,7 +822,7 @@
             return;
         }
 
-        // Generation image
+        // Generation image (pas d'appel Groq, pas de verrouillage necessaire)
         if (detectImg(texte)) { await genererImage(texte); return; }
 
         // Chat normal
@@ -782,6 +830,7 @@
         historique.push({role:'user', content: texte});
         typingText.innerText = langue === 'fr' ? 'HAU Intelligence reflechit...' : 'HAU Intelligence is thinking...';
         typing.style.display = 'flex';
+        verrouiller();
 
         try {
             const msgs = [
@@ -793,14 +842,16 @@
                 const rep = data.choices[0].message.content;
                 historique.push({role:'assistant', content: rep});
                 typing.style.display = 'none';
+                deverrouiller();
                 addBot(rep);
                 sauvegarder(texte);
             } else {
                 typing.style.display = 'none';
+                deverrouiller();
                 addErreur('<b>Reponse vide de Groq.</b> Reessayez.');
             }
         } catch(e) {
-            gererErreurGroq(e);
+            gererErreurGroq(e, texte);
         }
     }
 
