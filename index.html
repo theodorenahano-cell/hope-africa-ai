@@ -381,7 +381,7 @@
                 method: 'POST',
                 headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_KEY}`},
                 body: JSON.stringify({
-                    model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+                    model: 'llama-3.2-11b-vision-preview',
                     messages: [{role: 'user', content: [
                         {type: 'text', text: texte || `En tant qu'assistant académique de HAU, analyse ce document ou cette image de façon professionnelle et détaillée en ${langue === 'fr' ? 'français' : 'anglais'}.`},
                         {type: 'image_url', image_url: {url: `data:${mime};base64,${b64}`}}
@@ -470,7 +470,7 @@
                 method: 'POST',
                 headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_KEY}`},
                 body: JSON.stringify({
-                    model: 'llama-3.3-70b-versatile',
+                    model: 'llama3-70b-8192',
                     messages: [
                         {role: 'system', content: `Tu es HAU Intelligence, l'assistant académique officiel de Hope Africa University (HAU) — Université Espoir d'Afrique, université chrétienne privée à Bujumbura, Burundi.
 INFOS HAU : Fondée 2000 par Rév. Elie Buconyori | Recteur: Rév. Dr Col de Police Servilien Nitunga | Campus: Ngagara, Gishingano, Gitega | info@hau.bi | (+257) 22237973 | hau.bi
@@ -478,7 +478,13 @@ FACULTÉS: Médecine, Soins infirmiers, Anesthésie, Dentisterie, Droit, Science
 SERVICES: E-Learning (edu.hau.bi), MIS (mis.hau.bi), Journal (journal.hau.bi), Bibliothèque (stumis.hau.bi)
 LANGUE: ${langue === 'fr' ? 'FRANÇAIS' : 'ENGLISH'}
 CAPACITÉS: Répondre questions HAU, rédiger mémoires/dissertations jusqu'à 30 pages, analyser documents, informer sur inscriptions/bourses/frais, générer emplois du temps, orienter étudiants, aider toutes matières, recherche scientifique.
-Sois professionnel, précis et bienveillant. Utilise <thought></thought> si nécessaire.`},
+INSTRUCTIONS IMPORTANTES:
+- Toujours donner des réponses COMPLÈTES et DÉTAILLÉES avec le contenu réel
+- Quand tu fais une liste numérotée ou à puces, TOUJOURS écrire le contenu de chaque point
+- Ne jamais laisser de points vides ou sans contenu
+- Exemple correct: "1. Faculté de Médecine - forme des médecins en 7 ans"
+- Exemple incorrect: "1. " (vide)
+- Sois professionnel, précis et bienveillant.`},
                         ...historique
                     ],
                     max_tokens: 4000,
