@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -11,8 +12,6 @@
     <meta name="apple-mobile-web-app-title" content="HAU Intelligence">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="application-name" content="HAU Intelligence">
-    <meta name="msapplication-TileColor" content="#1e6b3c">
-    <meta name="msapplication-TileImage" content="https://www.hau.bi/assets/img/hope/header_logo.png">
     <link rel="apple-touch-icon" href="https://www.hau.bi/assets/img/hope/header_logo.png">
     <link rel="icon" href="https://www.hau.bi/assets/img/hope/header_logo.png">
     <link rel="manifest" id="pwa-manifest">
@@ -29,556 +28,266 @@
             --border: #1a2a3a;
             --text: #e3e3e3;
             --text2: #888;
-            --text3: #444;
+            --text3: #555;
         }
-
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-
-        html, body {
-            height: 100%;
-            height: -webkit-fill-available;
-            overflow: hidden;
-        }
-
+        html, body { height:100%; height:-webkit-fill-available; overflow:hidden; }
         body {
-            background: var(--bg);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-            color: var(--text);
-            display: flex;
-            min-height: 100vh;
-            min-height: -webkit-fill-available;
+            background:var(--bg);
+            font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+            color:var(--text);
+            display:flex;
+            min-height:100vh;
+            min-height:-webkit-fill-available;
         }
 
-        /* ===== SIDEBAR ===== */
+        /* SIDEBAR */
         #sidebar {
-            width: 280px;
-            background: var(--bg2);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            z-index: 1100;
-            flex-shrink: 0;
+            width:280px;
+            background:var(--bg2);
+            border-right:1px solid var(--border);
+            display:flex;
+            flex-direction:column;
+            z-index:100;
+            flex-shrink:0;
         }
-
         .sb-header {
-            padding: 16px;
-            padding-top: max(16px, env(safe-area-inset-top, 0px));
-            background: var(--bg3);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-shrink: 0;
+            padding:16px;
+            padding-top:max(16px,env(safe-area-inset-top,0px));
+            background:var(--bg3);
+            border-bottom:1px solid var(--border);
+            display:flex;
+            align-items:center;
+            gap:10px;
         }
+        .sb-logo { width:46px; height:46px; object-fit:contain; border-radius:10px; background:white; padding:4px; flex-shrink:0; }
+        .sb-logo-text h2 { color:#fff; font-size:13px; font-weight:700; }
+        .sb-logo-text p { color:var(--green3); font-size:10px; margin-top:2px; }
 
-        .sb-logo {
-            width: 46px; height: 46px;
-            object-fit: contain;
-            border-radius: 10px;
-            background: white;
-            padding: 4px;
-            flex-shrink: 0;
-        }
-
-        .sb-logo-text h2 { color: #fff; font-size: 13px; font-weight: 700; }
-        .sb-logo-text p { color: var(--green3); font-size: 10px; margin-top: 2px; }
-
-        .sb-nav { padding: 8px 10px; overflow-y: auto; flex-shrink: 0; }
-
-        .sb-section-title {
-            color: var(--text3);
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 700;
-            padding: 10px 8px 5px;
-        }
-
+        .sb-nav { padding:8px 10px; }
+        .sb-section-title { color:var(--text3); font-size:10px; text-transform:uppercase; letter-spacing:2px; font-weight:700; padding:10px 8px 5px; }
         .nav-item {
-            padding: 10px 12px;
-            margin: 2px 0;
-            border-radius: 10px;
-            cursor: pointer;
-            color: var(--text2);
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: background 0.2s;
-            -webkit-tap-highlight-color: transparent;
-            position: relative;
-            z-index: 1;
+            padding:10px 12px; margin:2px 0;
+            border-radius:10px; cursor:pointer;
+            color:var(--text2); font-size:13px;
+            display:flex; align-items:center; gap:10px;
+            transition:background 0.2s, color 0.2s;
         }
-        .nav-item:hover, .nav-item:active { background: var(--bg4); color: #fff; }
-        .nav-icon { font-size: 16px; flex-shrink: 0; width: 22px; text-align: center; }
+        .nav-item:hover, .nav-item:active { background:var(--bg4); color:#fff; }
+        .nav-icon { font-size:16px; flex-shrink:0; width:22px; text-align:center; }
 
-        /* HISTORIQUE */
         #historique {
-            flex: 1;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            padding: 0 10px 10px;
-        }
-
-        .hist-section-title {
-            color: var(--text3);
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 700;
-            padding: 10px 8px 5px;
+            flex:1;
+            overflow-y:auto;
+            padding:0 10px;
+            -webkit-overflow-scrolling:touch;
         }
 
         .session {
-            padding: 10px 12px;
-            margin: 3px 0;
-            border-radius: 10px;
-            cursor: pointer;
-            color: var(--text2);
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: background 0.2s;
-            -webkit-tap-highlight-color: transparent;
-            border: 1px solid transparent;
-            position: relative;
-            z-index: 1;
-            pointer-events: auto;
-            -webkit-user-select: none;
-            user-select: none;
+            padding:10px 12px;
+            margin:2px 0;
+            border-radius:10px;
+            cursor:pointer;
+            color:var(--text2);
+            font-size:12px;
+            display:flex;
+            align-items:center;
+            gap:8px;
+            transition:background 0.2s, color 0.2s;
+            border:1px solid transparent;
+            -webkit-user-select:none;
+            user-select:none;
         }
-        .session:hover, .session:active {
-            background: var(--bg4);
-            color: #fff;
-            border-color: #1e6b3c33;
-        }
+        .session:hover, .session:active { background:var(--bg4); color:#fff; border-color:var(--border); }
 
         .sess-icon {
-            width: 28px; height: 28px;
-            border-radius: 8px;
-            background: var(--bg4);
-            border: 1px solid #1e6b3c33;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width:28px; height:28px;
+            border-radius:6px;
+            background:var(--bg4);
+            border:1px solid var(--border);
+            flex-shrink:0;
+            display:flex;
+            align-items:center;
+            justify-content:center;
         }
-        .sess-icon-lines {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-            width: 12px;
-        }
-        .sess-icon-lines span {
-            display: block;
-            height: 1.5px;
-            background: var(--green3);
-            border-radius: 1px;
-            width: 100%;
-        }
-        .sess-icon-lines span:last-child { width: 70%; }
+        .sess-icon-bar { display:flex; flex-direction:column; gap:3px; }
+        .sess-icon-bar span { display:block; height:2px; border-radius:1px; background:var(--green3); }
+        .sess-icon-bar span:nth-child(1) { width:12px; }
+        .sess-icon-bar span:nth-child(2) { width:9px; }
+        .sess-icon-bar span:nth-child(3) { width:11px; }
 
-        .sess-inner { flex: 1; overflow: hidden; }
-        .sess-title {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            color: var(--text2);
-            font-size: 12px;
-            font-weight: 500;
-        }
-        .sess-date { font-size: 9px; color: var(--text3); margin-top: 2px; }
+        .sess-inner { flex:1; min-width:0; }
+        .sess-title { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:12px; color:var(--text2); }
+        .sess-date { font-size:9px; color:var(--text3); margin-top:2px; }
+        .session:hover .sess-title, .session:active .sess-title { color:#fff; }
+        .sess-vide { color:var(--text3); font-size:11px; padding:10px 12px; font-style:italic; }
 
-        .sess-del {
-            width: 22px; height: 22px;
-            border-radius: 50%;
-            background: transparent;
-            border: none;
-            color: var(--text3);
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            padding: 0;
-            line-height: 1;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .sess-del:active { color: #ff4a4a; }
-
-        .hist-empty {
-            text-align: center;
-            color: var(--text3);
-            font-size: 11px;
-            padding: 20px 10px;
-            line-height: 1.6;
-        }
-
-        /* BOUTONS BAS SIDEBAR */
         .sb-bottom {
-            padding: 10px;
-            padding-bottom: max(10px, env(safe-area-inset-bottom, 0px));
-            border-top: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            flex-shrink: 0;
+            padding:10px;
+            padding-bottom:max(10px,env(safe-area-inset-bottom,0px));
+            border-top:1px solid var(--border);
+            display:flex;
+            flex-direction:column;
+            gap:6px;
         }
-
         .s-btn {
-            border: none;
-            padding: 11px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            width: 100%;
-            transition: all 0.2s;
-            -webkit-tap-highlight-color: transparent;
-            text-decoration: none;
+            border:none; padding:11px;
+            border-radius:10px; cursor:pointer;
+            font-size:13px; font-weight:600;
+            display:flex; align-items:center;
+            justify-content:center; gap:6px;
+            width:100%; transition:opacity 0.2s;
         }
-        .s-btn:active { opacity: 0.8; transform: scale(0.98); }
+        .s-btn:active { opacity:0.8; }
+        #btn-install { background:var(--green); color:white; display:none; }
+        #btn-android { background:var(--bg4); color:var(--green3); border:1px solid #1e6b3c33; }
+        #btn-new { background:var(--bg3); color:var(--green3); border:1px solid #1e6b3c33; }
+        #btn-dl { background:var(--bg2); color:var(--text3); border:1px solid var(--border); }
 
-        #btn-install { background: var(--green); color: white; display: none; }
-        #btn-android { background: var(--bg4); color: var(--green3); border: 1px solid #1e6b3c33; }
-        #btn-new    { background: var(--bg3); color: var(--green3); border: 1px solid #1e6b3c33; }
-        #btn-dl     { background: var(--bg2); color: var(--text2); border: 1px solid var(--border); }
+        /* MAIN */
+        #main { flex:1; display:flex; flex-direction:column; background:var(--bg); overflow:hidden; min-width:0; }
 
-        /* Icone telecharger en CSS */
-        .dl-icon {
-            width: 16px; height: 16px;
-            border: 2px solid currentColor;
-            border-radius: 2px;
-            position: relative;
-            flex-shrink: 0;
-        }
-        .dl-icon::before {
-            content: '';
-            position: absolute;
-            top: 1px; left: 50%;
-            transform: translateX(-50%);
-            width: 2px; height: 6px;
-            background: currentColor;
-        }
-        .dl-icon::after {
-            content: '';
-            position: absolute;
-            top: 5px; left: 50%;
-            transform: translateX(-50%) rotate(0deg);
-            border-left: 4px solid transparent;
-            border-right: 4px solid transparent;
-            border-top: 4px solid currentColor;
-        }
-
-        /* ===== MAIN ===== */
-        #main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: var(--bg);
-            overflow: hidden;
-            min-width: 0;
-        }
-
-        /* HEADER sans backdrop-filter */
         #header {
-            background: #060d1a;
-            padding: 10px 16px;
-            padding-top: max(10px, env(safe-area-inset-top, 0px));
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--border);
-            flex-shrink: 0;
-            z-index: 10;
+            background:#060d1a;
+            padding:10px 16px;
+            padding-top:max(10px,env(safe-area-inset-top,0px));
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            border-bottom:1px solid var(--border);
+            flex-shrink:0;
+            z-index:10;
         }
+        .h-left { display:flex; align-items:center; gap:10px; }
 
-        .h-left { display: flex; align-items: center; gap: 10px; }
-
-        /* BOUTON MENU CSS pur */
         #menu-btn {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            width: 38px; height: 38px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-            flex-shrink: 0;
-            -webkit-tap-highlight-color: transparent;
+            background:transparent; border:none;
+            cursor:pointer; width:38px; height:38px;
+            border-radius:8px;
+            display:flex; align-items:center; justify-content:center;
+            padding:0; flex-shrink:0;
         }
-        #menu-btn:active { background: var(--bg4); }
+        #menu-btn:active { background:var(--bg4); }
+        .hamburger { display:flex; flex-direction:column; gap:5px; pointer-events:none; }
+        .hamburger span { display:block; width:20px; height:2px; background:var(--text2); border-radius:2px; }
 
-        .hamburger {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            width: 20px;
-            pointer-events: none;
-        }
-        .hamburger span {
-            display: block;
-            width: 20px;
-            height: 2px;
-            background: var(--text2);
-            border-radius: 2px;
-        }
-
-        .h-logo-wrap { position: relative; }
-        .h-logo {
-            width: 38px; height: 38px;
-            object-fit: contain;
-            border-radius: 8px;
-            background: white;
-            padding: 3px;
-            display: block;
-        }
+        .h-logo-wrap { position:relative; }
+        .h-logo { width:38px; height:38px; object-fit:contain; border-radius:8px; background:white; padding:3px; display:block; }
         .h-dot {
-            position: absolute; bottom: -2px; right: -2px;
-            width: 10px; height: 10px;
-            background: #00cc66;
-            border-radius: 50%;
-            border: 2px solid var(--bg);
-            animation: blink 2s infinite;
+            position:absolute; bottom:-2px; right:-2px;
+            width:10px; height:10px;
+            background:#00c870; border-radius:50%;
+            border:2px solid var(--bg);
+            animation:blink 2s infinite;
         }
-        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+        .h-text h1 { color:#fff; font-size:15px; font-weight:700; line-height:1.2; }
+        .h-text p { color:var(--green3); font-size:10px; margin-top:1px; }
+        .h-right { display:flex; align-items:center; gap:8px; }
+        .lang-btn { background:var(--bg3); border:1px solid #1e6b3c33; color:var(--green3); padding:6px 10px; border-radius:8px; cursor:pointer; font-size:11px; font-weight:700; }
+        .badge { background:var(--green); color:white; padding:4px 10px; border-radius:6px; font-size:10px; font-weight:800; }
 
-        .h-text h1 { color: #fff; font-size: 15px; font-weight: 700; line-height: 1.2; }
-        .h-text p { color: var(--green3); font-size: 10px; margin-top: 1px; }
-
-        .h-right { display: flex; align-items: center; gap: 8px; }
-        .lang-btn {
-            background: var(--bg3);
-            border: 1px solid #1e6b3c33;
-            color: var(--green3);
-            padding: 6px 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 11px;
-            font-weight: 700;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .badge {
-            background: var(--green);
-            color: white;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-        }
-
-        /* OVERLAY sans blur, z-index SOUS sidebar */
-        #overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.6);
-            z-index: 1050;
-        }
-        #overlay.open { display: block; }
+        #overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:999; }
+        #overlay.open { display:block; }
 
         /* MESSAGES */
-        #messages {
-            flex: 1;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
+        #messages { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:16px; display:flex; flex-direction:column; gap:16px; }
 
-        .welcome-card {
-            background: var(--bg3);
-            border: 1px solid #1a3a2a;
-            border-radius: 16px;
-            padding: 24px 16px;
-            text-align: center;
-        }
-        .wc-logo {
-            width: 80px; height: 80px;
-            object-fit: contain;
-            border-radius: 14px;
-            background: white;
-            padding: 8px;
-            margin: 0 auto 14px;
-            display: block;
-        }
-        .wc-title { color: #fff; font-size: 20px; font-weight: 800; margin-bottom: 3px; }
-        .wc-sub { color: var(--green3); font-size: 12px; margin-bottom: 4px; }
-        .wc-desc { color: var(--text3); font-size: 11px; margin-bottom: 16px; line-height: 1.5; }
-        .quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .qbtn {
-            background: var(--bg2);
-            border: 1px solid #1a3a2a;
-            color: var(--green3);
-            padding: 10px 8px;
-            border-radius: 10px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: left;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .qbtn:hover, .qbtn:active { background: var(--bg4); color: #fff; border-color: var(--green); }
-        .qbtn-icon { font-size: 16px; flex-shrink: 0; }
+        .welcome-card { background:var(--bg3); border:1px solid #1a3a2a; border-radius:16px; padding:24px 16px; text-align:center; }
+        .wc-logo { width:80px; height:80px; object-fit:contain; border-radius:14px; background:white; padding:8px; margin:0 auto 14px; display:block; }
+        .wc-title { color:#fff; font-size:20px; font-weight:800; margin-bottom:3px; }
+        .wc-sub { color:var(--green3); font-size:12px; margin-bottom:4px; }
+        .wc-desc { color:var(--text3); font-size:11px; margin-bottom:16px; line-height:1.5; }
+        .quick-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+        .qbtn { background:var(--bg2); border:1px solid #1a3a2a; color:var(--green3); padding:10px 8px; border-radius:10px; font-size:12px; cursor:pointer; text-align:left; display:flex; align-items:center; gap:6px; }
+        .qbtn:active { background:var(--bg4); color:#fff; }
+        .qbtn-icon { font-size:16px; flex-shrink:0; }
 
-        .msg-user { align-self: flex-end; max-width: 82%; }
-        .msg-bot {
-            align-self: flex-start; max-width: 100%;
-            display: flex; gap: 10px;
-            align-items: flex-start; width: 100%;
-        }
+        .msg-user { align-self:flex-end; max-width:82%; }
+        .msg-bot { align-self:flex-start; max-width:100%; display:flex; gap:10px; align-items:flex-start; width:100%; }
+        .hau-av { width:34px; height:34px; object-fit:contain; border-radius:8px; background:white; padding:3px; flex-shrink:0; }
+        .bubble-user { background:var(--bg4); color:#f3f4f6; padding:12px 16px; border-radius:18px 18px 4px 18px; font-size:15px; line-height:1.6; border:1px solid #1a3060; word-wrap:break-word; }
+        .bot-wrap { display:flex; flex-direction:column; gap:8px; flex:1; overflow:hidden; min-width:0; }
+        .thought-block { background:var(--bg); border-left:2px solid var(--green); padding:8px 12px; border-radius:8px; font-size:12px; color:var(--text3); }
+        .thought-block summary { cursor:pointer; font-weight:600; color:var(--green3); outline:none; }
+        .bubble-bot { color:var(--text); font-size:15px; line-height:1.65; width:100%; word-wrap:break-word; }
+        .bubble-bot p { margin-bottom:8px; }
+        .bubble-bot p:last-child { margin-bottom:0; }
+        .bubble-bot pre { background:var(--bg2); padding:12px; border-radius:8px; overflow-x:auto; margin:10px 0; border:1px solid var(--border); font-size:13px; }
+        .bubble-bot code { background:var(--bg4); padding:2px 5px; border-radius:4px; font-family:monospace; font-size:12px; color:var(--green3); }
+        .bubble-bot h1,.bubble-bot h2,.bubble-bot h3 { color:var(--green3); margin:12px 0 6px; }
+        .bubble-bot ul,.bubble-bot ol { padding-left:20px; margin-bottom:8px; }
+        .bubble-bot li { margin-bottom:4px; }
+        .bubble-bot table { width:100%; border-collapse:collapse; margin:10px 0; font-size:13px; }
+        .bubble-bot th { background:var(--bg4); color:var(--green3); padding:8px; text-align:left; }
+        .bubble-bot td { padding:8px; border-bottom:1px solid var(--border); }
+        .bubble-bot blockquote { border-left:3px solid var(--green); padding:8px 12px; color:var(--text2); margin:8px 0; background:var(--bg2); border-radius:4px; }
+        .bubble-bot strong { color:#fff; }
+        .msg-time { font-size:10px; color:var(--text3); margin-top:3px; }
 
-        .hau-av {
-            width: 34px; height: 34px;
-            object-fit: contain;
-            border-radius: 8px;
-            background: white;
-            padding: 3px;
-            flex-shrink: 0;
-        }
+        .gen-img-wrap { display:flex; flex-direction:column; gap:8px; }
+        .gen-img-label { font-size:11px; color:var(--green3); font-weight:600; }
+        .gen-img { max-width:100%; border-radius:12px; border:1px solid var(--border); cursor:pointer; display:block; }
+        .img-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:4px; }
+        .img-btn { background:var(--bg2); border:1px solid #1e6b3c33; color:var(--green3); padding:6px 12px; border-radius:8px; font-size:12px; text-decoration:none; display:inline-flex; align-items:center; gap:4px; }
+        .analyzed-img { max-width:100%; border-radius:10px; margin-bottom:6px; border:1px solid var(--border); display:block; }
 
-        .bubble-user {
-            background: var(--bg4);
-            color: #f3f4f6;
-            padding: 12px 16px;
-            border-radius: 18px 18px 4px 18px;
-            font-size: 15px; line-height: 1.6;
-            border: 1px solid #1a3060;
-            word-wrap: break-word;
-        }
+        /* Bulle erreur */
+        .bubble-error { background:#1a0a0a; border:1px solid #5a1a1a; color:#ff7070; padding:12px 16px; border-radius:12px; font-size:13px; line-height:1.5; }
+        .bubble-error b { color:#ff4444; }
+        .err-key-btn { margin-top:8px; background:#2a0a0a; border:1px solid #5a1a1a; color:#ff7070; padding:6px 14px; border-radius:8px; font-size:12px; cursor:pointer; display:inline-block; }
 
-        .bot-wrap {
-            display: flex; flex-direction: column;
-            gap: 8px; flex: 1;
-            overflow: hidden; min-width: 0;
-        }
-
-        .thought-block {
-            background: var(--bg);
-            border-left: 2px solid var(--green);
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 12px;
-            color: var(--text3);
-        }
-        .thought-block summary { cursor: pointer; font-weight: 600; color: var(--green3); outline: none; }
-
-        .bubble-bot { color: var(--text); font-size: 15px; line-height: 1.65; width: 100%; word-wrap: break-word; }
-        .bubble-bot p { margin-bottom: 8px; }
-        .bubble-bot p:last-child { margin-bottom: 0; }
-        .bubble-bot pre { background: var(--bg2); padding: 12px; border-radius: 8px; overflow-x: auto; margin: 10px 0; border: 1px solid var(--border); font-size: 13px; }
-        .bubble-bot code { background: var(--bg4); padding: 2px 5px; border-radius: 4px; font-family: monospace; font-size: 12px; color: var(--green3); }
-        .bubble-bot h1,.bubble-bot h2,.bubble-bot h3 { color: var(--green3); margin: 12px 0 6px; }
-        .bubble-bot ul,.bubble-bot ol { padding-left: 20px; margin-bottom: 8px; }
-        .bubble-bot li { margin-bottom: 4px; }
-        .bubble-bot table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13px; }
-        .bubble-bot th { background: var(--bg4); color: var(--green3); padding: 8px; text-align: left; }
-        .bubble-bot td { padding: 8px; border-bottom: 1px solid var(--border); }
-        .bubble-bot blockquote { border-left: 3px solid var(--green); padding: 8px 12px; color: var(--text2); margin: 8px 0; background: var(--bg2); border-radius: 4px; }
-        .bubble-bot strong { color: #fff; }
-        .msg-time { font-size: 10px; color: var(--text3); margin-top: 3px; }
-
-        .gen-img-wrap { display: flex; flex-direction: column; gap: 8px; }
-        .gen-img-label { font-size: 11px; color: var(--green3); font-weight: 600; }
-        .gen-img { max-width: 100%; border-radius: 12px; border: 1px solid var(--border); cursor: pointer; display: block; }
-        .img-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
-        .img-btn { background: var(--bg2); border: 1px solid #1e6b3c33; color: var(--green3); padding: 6px 12px; border-radius: 8px; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
-        .analyzed-img { max-width: 100%; border-radius: 10px; margin-bottom: 6px; border: 1px solid var(--border); display: block; }
-
-        #typing { display: none; padding: 0 16px 8px; align-items: center; gap: 10px; flex-shrink: 0; }
-        .typing-av { width: 28px; height: 28px; object-fit: contain; border-radius: 6px; background: white; padding: 2px; }
-        .typing-dots { display: flex; gap: 4px; }
-        .d { width: 6px; height: 6px; background: var(--green3); border-radius: 50%; animation: bounce 1.4s infinite; }
+        #typing { display:none; padding:0 16px 8px; align-items:center; gap:10px; flex-shrink:0; }
+        .typing-av { width:28px; height:28px; object-fit:contain; border-radius:6px; background:white; padding:2px; }
+        .typing-dots { display:flex; gap:4px; }
+        .d { width:6px; height:6px; background:var(--green3); border-radius:50%; animation:bounce 1.4s infinite; }
         .d:nth-child(2){animation-delay:0.2s} .d:nth-child(3){animation-delay:0.4s}
         @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
-        .typing-text { color: var(--text3); font-size: 12px; font-style: italic; }
+        .typing-text { color:var(--text3); font-size:12px; font-style:italic; }
 
         #input-container {
-            padding: 8px 16px;
-            padding-bottom: max(12px, env(safe-area-inset-bottom, 0px));
-            background: var(--bg);
-            border-top: 1px solid var(--border);
-            flex-shrink: 0;
+            padding:8px 16px;
+            padding-bottom:max(12px,env(safe-area-inset-bottom,0px));
+            background:var(--bg);
+            border-top:1px solid var(--border);
+            flex-shrink:0;
         }
-        #input-zone {
-            background: var(--bg2);
-            border-radius: 14px;
-            padding: 6px 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            border: 1px solid var(--border);
-            transition: border-color 0.2s;
-        }
-        #input-zone:focus-within { border-color: #1e6b3c55; }
-        #file-preview { display: none; flex-wrap: wrap; gap: 6px; padding: 4px 0; }
-        .prev-badge { background: var(--bg4); color: var(--green3); padding: 4px 10px; border-radius: 8px; font-size: 11px; display: flex; align-items: center; gap: 5px; border: 1px solid #1e6b3c33; }
-        .prev-badge button { cursor: pointer; color: #ff4a4a; background: none; border: none; font-size: 14px; padding: 0; }
-        .input-row { display: flex; align-items: center; gap: 6px; }
-        #msg-input {
-            flex: 1; padding: 10px 4px;
-            border: none; background: transparent;
-            color: var(--text); font-size: 16px;
-            outline: none;
-        }
-        #msg-input::placeholder { color: var(--text3); }
-        .ibtn {
-            background: transparent; border: none;
-            color: var(--text3); width: 38px; height: 38px;
-            border-radius: 8px; cursor: pointer;
-            display: flex; align-items: center;
-            justify-content: center; font-size: 18px;
-            flex-shrink: 0; transition: all 0.2s;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .ibtn:active { background: var(--bg4); color: #fff; }
-        #send-btn { background: var(--green); color: white; border-radius: 10px; width: 36px; height: 36px; font-size: 16px; }
-        #file-input { display: none; }
+        #input-zone { background:var(--bg2); border-radius:14px; padding:6px 12px; display:flex; flex-direction:column; gap:4px; border:1px solid var(--border); transition:border-color 0.2s; }
+        #input-zone:focus-within { border-color:#1e6b3c55; }
+        #file-preview { display:none; flex-wrap:wrap; gap:6px; padding:4px 0; }
+        .prev-badge { background:var(--bg4); color:var(--green3); padding:4px 10px; border-radius:8px; font-size:11px; display:flex; align-items:center; gap:5px; border:1px solid #1e6b3c33; }
+        .prev-badge span { cursor:pointer; color:#ff4a4a; }
+        .input-row { display:flex; align-items:center; gap:6px; }
+        #msg-input { flex:1; padding:10px 4px; border:none; background:transparent; color:var(--text); font-size:16px; outline:none; }
+        #msg-input::placeholder { color:var(--text3); }
+        .ibtn { background:transparent; border:none; color:var(--text3); width:38px; height:38px; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+        .ibtn:active { background:var(--bg4); color:#fff; }
+        #send-btn { background:var(--green); color:white; border-radius:10px; width:36px; height:36px; font-size:16px; }
+        #file-input { display:none; }
 
-        ::-webkit-scrollbar { width: 2px; }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+        ::-webkit-scrollbar { width:2px; }
+        ::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
 
-        /* RESPONSIVE */
-        @media (max-width: 900px) {
-            body { flex-direction: column; }
+        @media (max-width:900px) {
+            body { flex-direction:column; }
             #sidebar {
-                position: fixed;
-                top: 0; left: -300px; bottom: 0;
-                width: 290px;
-                height: 100%;
-                transition: left 0.3s cubic-bezier(0.4,0,0.2,1);
-                z-index: 1100;
-                overflow-y: hidden;
+                position:fixed; top:0; left:-295px; bottom:0;
+                width:290px; height:100%;
+                transition:left 0.3s cubic-bezier(0.4,0,0.2,1);
             }
-            #sidebar.open { left: 0; box-shadow: 4px 0 40px rgba(0,0,0,0.6); }
-            #messages { padding: 12px; }
-            #input-container { padding: 6px 12px; padding-bottom: max(10px, env(safe-area-inset-bottom, 0px)); }
+            #sidebar.open { left:0; box-shadow:4px 0 30px rgba(0,0,0,0.5); }
+            #messages { padding:12px; }
+            #input-container { padding:6px 12px; padding-bottom:max(10px,env(safe-area-inset-bottom,0px)); }
         }
-
-        @media (min-width: 901px) {
-            #menu-btn { display: none; }
-            #messages { padding: 20px 10%; }
-            #input-container { padding: 8px 10% 20px; }
+        @media (min-width:901px) {
+            #menu-btn { display:none; }
+            #messages { padding:20px 10%; }
+            #input-container { padding:8px 10% 20px; }
         }
-
-        @supports (padding-top: env(safe-area-inset-top)) {
-            #header { padding-top: max(10px, env(safe-area-inset-top)); }
-            #sidebar .sb-header { padding-top: max(16px, env(safe-area-inset-top)); }
-            #input-container { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+        @supports (padding-top:env(safe-area-inset-top)) {
+            #header { padding-top:max(10px,env(safe-area-inset-top)); }
+            #sidebar .sb-header { padding-top:max(16px,env(safe-area-inset-top)); }
+            #input-container { padding-bottom:max(12px,env(safe-area-inset-bottom)); }
         }
     </style>
 </head>
@@ -597,33 +306,27 @@
 
     <div class="sb-nav">
         <div class="sb-section-title">Menu Principal</div>
-        <div class="nav-item" onclick="qr('Quels sont tous les programmes et facultes disponibles a Hope Africa University ?')"><span class="nav-icon">🏛️</span> Facultes et Programmes</div>
-        <div class="nav-item" onclick="qr('Comment faire une inscription a HAU ? Documents requis, etapes et delais.')"><span class="nav-icon">📝</span> Inscription</div>
-        <div class="nav-item" onclick="qr('Quels sont les frais de scolarite et les bourses disponibles a HAU ?')"><span class="nav-icon">💰</span> Frais et Bourses</div>
-        <div class="nav-item" onclick="qr('Genere un emploi du temps universitaire complet pour une semaine a HAU.')"><span class="nav-icon">🗓️</span> Emploi du temps</div>
-        <div class="nav-item" onclick="qr('Comment rediger un memoire de fin d etudes selon les normes de HAU ? Guide complet.')"><span class="nav-icon">📚</span> Redaction Academique</div>
-        <div class="nav-item" onclick="qr('Quelles sont les regles et le reglement interieur de Hope Africa University ?')"><span class="nav-icon">📋</span> Reglement</div>
-        <div class="nav-item" onclick="qr('Quelles sont les activites parascolaires et la vie estudiantine a HAU ?')"><span class="nav-icon">🎭</span> Vie Campus</div>
-        <div class="nav-item" onclick="qr('Quelles sont les opportunites de recherche scientifique a HAU ?')"><span class="nav-icon">🔬</span> Recherche</div>
-        <div class="nav-item" onclick="qr('Parle-moi de l histoire, la mission et la vision de Hope Africa University.')"><span class="nav-icon">ℹ️</span> A propos de HAU</div>
+        <div class="nav-item" onclick="qr('Quels sont tous les programmes et facultes disponibles a Hope Africa University ?')"><span class="nav-icon">&#127963;</span> Facultes &amp; Programmes</div>
+        <div class="nav-item" onclick="qr('Comment faire une inscription a HAU ? Documents requis, etapes et delais.')"><span class="nav-icon">&#128221;</span> Inscription</div>
+        <div class="nav-item" onclick="qr('Quels sont les frais de scolarite et les bourses disponibles a HAU ?')"><span class="nav-icon">&#128176;</span> Frais &amp; Bourses</div>
+        <div class="nav-item" onclick="qr('Genere un emploi du temps universitaire complet pour une semaine a HAU.')"><span class="nav-icon">&#128197;</span> Emploi du temps</div>
+        <div class="nav-item" onclick="qr('Comment rediger un memoire de fin d etudes selon les normes de HAU ? Guide complet.')"><span class="nav-icon">&#128218;</span> Redaction Academique</div>
+        <div class="nav-item" onclick="qr('Quelles sont les regles et le reglement interieur de Hope Africa University ?')"><span class="nav-icon">&#128203;</span> Reglement</div>
+        <div class="nav-item" onclick="qr('Quelles sont les activites parascolaires et la vie estudiantine a HAU ?')"><span class="nav-icon">&#127917;</span> Vie Campus</div>
+        <div class="nav-item" onclick="qr('Quelles sont les opportunites de recherche scientifique a HAU ?')"><span class="nav-icon">&#128302;</span> Recherche</div>
+        <div class="nav-item" onclick="qr('Parle-moi de l histoire, la mission et la vision de Hope Africa University.')"><span class="nav-icon">&#8505;</span> A propos de HAU</div>
+        <div class="sb-section-title" style="margin-top:8px">Historique</div>
     </div>
 
     <div id="historique">
-        <div class="hist-section-title">Historique</div>
-        <div id="hist-liste">
-            <div class="hist-empty">Aucune conversation<br>sauvegardee</div>
-        </div>
+        <div class="sess-vide">Aucune conversation sauvegardee</div>
     </div>
 
     <div class="sb-bottom">
-        <button id="btn-install" class="s-btn" onclick="installer()">📲 Installer l'app</button>
-        <button id="btn-android" class="s-btn" onclick="installerMobile()">📱 Android / iPhone</button>
+        <button id="btn-install" class="s-btn" onclick="installer()">Installer l'app</button>
+        <button id="btn-android" class="s-btn" onclick="installerMobile()">Android / iPhone</button>
         <button id="btn-new" class="s-btn" onclick="nouveau();fermer();">+ Nouvelle conversation</button>
-        <!-- BOUTON TELECHARGER — fonctionne sur tous les appareils et navigateurs -->
-        <button id="btn-dl" class="s-btn" onclick="telecharger()">
-            <div class="dl-icon"></div>
-            Telecharger l'application
-        </button>
+        <button id="btn-dl" class="s-btn" onclick="telecharger()">Telecharger l'app</button>
     </div>
 </div>
 
@@ -632,9 +335,7 @@
         <div class="h-left">
             <button id="menu-btn" onclick="ouvrir()" aria-label="Menu">
                 <div class="hamburger">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                    <span></span><span></span><span></span>
                 </div>
             </button>
             <div class="h-logo-wrap">
@@ -664,100 +365,72 @@
         <div id="input-zone">
             <div id="file-preview"></div>
             <div class="input-row">
-                <button class="ibtn" onclick="document.getElementById('file-input').click()" title="Photo">📷</button>
+                <button class="ibtn" onclick="document.getElementById('file-input').click()" title="Photo">&#128247;</button>
                 <input type="file" id="file-input" onchange="gererFichier(this)" accept="image/*">
                 <input id="msg-input" type="text" placeholder="Posez votre question..." inputmode="text" autocomplete="off" autocorrect="off" spellcheck="false">
-                <button id="send-btn" class="ibtn" onclick="envoyer()">➤</button>
+                <button id="send-btn" class="ibtn" onclick="envoyer()">&#10148;</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // PWA
-    var mf = {name:"HAU Intelligence",short_name:"HAU IA",start_url:window.location.href,display:"standalone",orientation:"portrait-primary",background_color:"#060d1a",theme_color:"#1e6b3c",icons:[{src:"https://www.hau.bi/assets/img/hope/header_logo.png",sizes:"192x192",type:"image/png",purpose:"any maskable"},{src:"https://www.hau.bi/assets/img/hope/header_logo.png",sizes:"512x512",type:"image/png",purpose:"any maskable"}]};
+    // ─── PWA Manifest ───
+    const mf = {name:"HAU Intelligence",short_name:"HAU IA",start_url:window.location.href,display:"standalone",orientation:"portrait-primary",background_color:"#060d1a",theme_color:"#1e6b3c",icons:[{src:"https://www.hau.bi/assets/img/hope/header_logo.png",sizes:"192x192",type:"image/png"},{src:"https://www.hau.bi/assets/img/hope/header_logo.png",sizes:"512x512",type:"image/png"}]};
     document.getElementById('pwa-manifest').href = "data:application/manifest+json,"+encodeURIComponent(JSON.stringify(mf));
 
-    var GROQ_KEY = localStorage.getItem('hau_key') || '';
-    if(!GROQ_KEY) {
-        setTimeout(function() {
-            var k = prompt('Bienvenue sur HAU Intelligence !\n\nEntrez votre cle API Groq gratuite.\n(Obtenez-la sur console.groq.com)');
-            if(k && k.indexOf('gsk_') === 0) { GROQ_KEY = k; localStorage.setItem('hau_key', k); }
-        }, 600);
+    // ─── Clé API Groq ───
+    let GROQ_KEY = localStorage.getItem('hau_key') || '';
+
+    function demanderCle(msg) {
+        const m = msg || 'Entrez votre cle API Groq gratuite.\n(Obtenez-la sur console.groq.com)';
+        const k = prompt('HAU Intelligence\n\n' + m);
+        if (k && k.trim().startsWith('gsk_')) {
+            GROQ_KEY = k.trim();
+            localStorage.setItem('hau_key', GROQ_KEY);
+            addBot('**Cle API enregistree avec succes !** Vous pouvez maintenant poser vos questions.');
+        } else if (k !== null) {
+            addErreur('Cle invalide. Elle doit commencer par <b>gsk_</b>.<br><button class="err-key-btn" onclick="demanderCle()">Reessayer</button>');
+        }
     }
 
-    var langue = localStorage.getItem('hau_langue') || 'fr';
+    if (!GROQ_KEY) {
+        setTimeout(() => demanderCle(), 600);
+    }
+
+    // ─── Langue ───
+    let langue = localStorage.getItem('hau_langue') || 'fr';
     document.getElementById('lang-btn').innerText = langue.toUpperCase();
 
-    var installPrompt = null;
-    window.addEventListener('beforeinstallprompt', function(e) {
-        e.preventDefault();
-        installPrompt = e;
+    // ─── PWA install ───
+    let installPrompt = null;
+    window.addEventListener('beforeinstallprompt', e => {
+        e.preventDefault(); installPrompt = e;
         document.getElementById('btn-install').style.display = 'flex';
     });
 
     function installer() {
-        if(installPrompt) {
+        if (installPrompt) {
             installPrompt.prompt();
-            installPrompt.userChoice.then(function(r) {
-                if(r.outcome === 'accepted') document.getElementById('btn-install').style.display = 'none';
+            installPrompt.userChoice.then(r => {
+                if (r.outcome === 'accepted') document.getElementById('btn-install').style.display = 'none';
                 installPrompt = null;
             });
         }
     }
 
     function installerMobile() {
-        var ua = navigator.userAgent.toLowerCase();
-        var isIOS = /iphone|ipad|ipod/.test(ua);
-        var isAndroid = /android/.test(ua);
-        var lien = window.location.href;
-        if(installPrompt) { installer(); return; }
-        if(isIOS) {
-            alert('Installation sur iPhone/iPad :\n\n1. Bouton Partager en bas de Safari\n2. "Sur l\'ecran d\'accueil"\n3. "Ajouter"\n\nUtilisez Safari uniquement !');
-        } else if(isAndroid) {
-            if(navigator.clipboard) {
-                navigator.clipboard.writeText(lien).then(function() {
-                    alert('Installation sur Android :\n\n1. Ouvrez Chrome\n2. Le lien est copie — collez-le\n3. Menu 3 points > "Ajouter a l\'ecran d\'accueil"');
-                }).catch(function() { alert('Lien : ' + lien + '\n\nCopiez-le dans Chrome puis : menu > Ajouter a l\'ecran d\'accueil'); });
-            } else {
-                alert('Lien : ' + lien + '\n\nCopiez-le dans Chrome puis : menu > Ajouter a l\'ecran d\'accueil');
-            }
+        const ua = navigator.userAgent.toLowerCase();
+        const lien = window.location.href;
+        if (installPrompt) { installer(); return; }
+        if (/iphone|ipad|ipod/.test(ua)) {
+            alert('Installation sur iPhone/iPad :\n\n1. Appuyez sur le bouton Partager (bas de Safari)\n2. Appuyez sur "Sur l\'ecran d\'accueil"\n3. Appuyez sur "Ajouter"\n\nUtilisez Safari !');
+        } else if (/android/.test(ua)) {
+            navigator.clipboard.writeText(lien).then(() => {
+                alert('Installation sur Android :\n\n1. Ouvrez Chrome\n2. Collez le lien copie\n3. Les 3 points en haut\n4. "Ajouter a l\'ecran d\'accueil"');
+            }).catch(() => alert('Copiez ce lien dans Chrome :\n\n' + lien));
         } else {
-            alert('Lien de l\'application :\n\n' + lien);
-        }
-    }
-
-    // ===== TELECHARGER — compatible tous navigateurs et appareils =====
-    function telecharger() {
-        try {
-            // Methode 1 : Blob + lien de telechargement (Chrome, Firefox, Edge, Opera, Android, PC)
-            var html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-            var blob = new Blob([html], {type: 'text/html;charset=utf-8'});
-
-            // Verifier si le navigateur supporte le telechargement
-            var a = document.createElement('a');
-
-            if(typeof a.download !== 'undefined') {
-                // Navigateurs modernes
-                var url = URL.createObjectURL(blob);
-                a.href = url;
-                a.download = 'HAU_Intelligence.html';
-                a.style.display = 'none';
-                document.body.appendChild(a);
-                a.click();
-                setTimeout(function() {
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                }, 1000);
-            } else {
-                // Fallback Safari iOS et vieux navigateurs : ouvrir dans un nouvel onglet
-                var url2 = URL.createObjectURL(blob);
-                window.open(url2, '_blank');
-                setTimeout(function() { URL.revokeObjectURL(url2); }, 5000);
-            }
-        } catch(e) {
-            // Dernier recours : afficher le lien de la page
-            alert('Pour sauvegarder l\'application :\n\nSur PC : Ctrl+S (ou Cmd+S sur Mac)\nSur Android : Menu du navigateur > Telechargements\nSur iPhone : Bouton Partager > Enregistrer dans Fichiers');
+            navigator.clipboard.writeText(lien).then(() => alert('Lien copie !')).catch(() => alert(lien));
         }
     }
 
@@ -769,82 +442,76 @@
         addBot(langue === 'fr' ? 'Langue changee en **Francais**.' : 'Language changed to **English**.');
     }
 
-    var sidebar = document.getElementById('sidebar');
-    var overlay = document.getElementById('overlay');
-
-    function ouvrir() { sidebar.classList.add('open'); overlay.classList.add('open'); }
-    function fermer() { sidebar.classList.remove('open'); overlay.classList.remove('open'); }
-
-    marked.setOptions({gfm: true, breaks: true});
-    var msgDiv = document.getElementById('messages');
-    var input = document.getElementById('msg-input');
-    var typing = document.getElementById('typing');
-    var typingText = document.getElementById('typing-text');
-    var histListe = document.getElementById('hist-liste');
-
-    var historique = [];
-    var sessions = [];
-    try { sessions = JSON.parse(localStorage.getItem('hau_sessions') || '[]'); } catch(e) { sessions = []; }
-    var fichierJoint = null;
-    var fichierBase64 = null;
-
-    function heure() {
-        return new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+    function telecharger() {
+        try {
+            const blob = new Blob([document.documentElement.outerHTML], {type:'text/html;charset=utf-8'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = 'HAU_Intelligence.html';
+            document.body.appendChild(a); a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch(e) { alert('Erreur telechargement.'); }
     }
 
+    // ─── Sidebar ───
+    const sidebar = document.getElementById('sidebar');
+    function ouvrir() { sidebar.classList.add('open'); document.getElementById('overlay').classList.add('open'); }
+    function fermer() { sidebar.classList.remove('open'); document.getElementById('overlay').classList.remove('open'); }
+
+    // ─── Marked ───
+    marked.setOptions({gfm:true, breaks:true});
+
+    const msgDiv  = document.getElementById('messages');
+    const input   = document.getElementById('msg-input');
+    const typing  = document.getElementById('typing');
+    const typingText = document.getElementById('typing-text');
+    const histDiv = document.getElementById('historique');
+
+    let historique = [];
+    let sessions   = JSON.parse(localStorage.getItem('hau_sessions') || '[]');
+    let fichierJoint  = null;
+    let fichierBase64 = null;
+
+    function heure() { return new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}); }
+
+    // ─── Sessions ───
     function affSessions() {
-        if(sessions.length === 0) {
-            histListe.innerHTML = '<div class="hist-empty">Aucune conversation<br>sauvegardee</div>';
+        histDiv.innerHTML = '';
+        if (!sessions.length) {
+            histDiv.innerHTML = '<div class="sess-vide">Aucune conversation sauvegardee</div>';
             return;
         }
-        histListe.innerHTML = '';
-        var reversed = sessions.slice().reverse();
-        for(var i = 0; i < reversed.length; i++) {
-            (function(s, idx) {
-                var div = document.createElement('div');
-                div.className = 'session';
-                div.innerHTML =
-                    '<div class="sess-icon"><div class="sess-icon-lines"><span></span><span></span><span></span></div></div>' +
-                    '<div class="sess-inner">' +
-                        '<div class="sess-title">' + (s.titre || 'Discussion') + '</div>' +
-                        '<div class="sess-date">' + (s.date || '') + '</div>' +
-                    '</div>' +
-                    '<button class="sess-del" title="Supprimer">&#10005;</button>';
-
-                var delBtn = div.querySelector('.sess-del');
-                delBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    sessions.splice(idx, 1);
-                    localStorage.setItem('hau_sessions', JSON.stringify(sessions));
-                    affSessions();
-                });
-
-                div.addEventListener('click', function() {
-                    charger(idx);
-                    fermer();
-                });
-
-                histListe.appendChild(div);
-            })(reversed[i], sessions.length - 1 - i);
-        }
+        sessions.slice().reverse().forEach((s, i) => {
+            const idx = sessions.length - 1 - i;
+            const div = document.createElement('div');
+            div.className = 'session';
+            div.innerHTML =
+                '<div class="sess-icon"><div class="sess-icon-bar"><span></span><span></span><span></span></div></div>' +
+                '<div class="sess-inner">' +
+                  '<div class="sess-title">' + (s.titre || 'Discussion') + '</div>' +
+                  '<div class="sess-date">' + (s.date || '') + '</div>' +
+                '</div>';
+            div.onclick = function() { charger(idx); fermer(); };
+            histDiv.appendChild(div);
+        });
     }
 
     function charger(i) {
-        if(!sessions[i]) return;
+        if (!sessions[i]) return;
         historique = sessions[i].messages || [];
         msgDiv.innerHTML = '';
-        for(var j = 0; j < historique.length; j++) {
-            if(historique[j].role === 'user') addUser(historique[j].content);
-            if(historique[j].role === 'assistant') addBot(historique[j].content);
-        }
+        historique.forEach(m => {
+            if (m.role === 'user')      addUser(m.content);
+            if (m.role === 'assistant') addBot(m.content);
+        });
     }
 
     function nouveau() {
-        if(historique.length > 0) {
-            var p = null;
-            for(var i = 0; i < historique.length; i++) { if(historique[i].role === 'user') { p = historique[i]; break; } }
+        if (historique.length > 0) {
+            const p = historique.find(m => m.role === 'user');
             sessions.push({
-                titre: p ? p.content.substring(0, 28) + '...' : 'Discussion',
+                titre: p ? p.content.substring(0,30) : 'Discussion',
                 date: new Date().toLocaleDateString('fr-FR'),
                 messages: historique
             });
@@ -856,8 +523,9 @@
         bienvenue();
     }
 
+    // ─── Affichage messages ───
     function addUser(texte) {
-        var d = document.createElement('div');
+        const d = document.createElement('div');
         d.className = 'msg-user';
         d.innerHTML = '<div class="bubble-user">' + texte + '</div><div class="msg-time">' + heure() + '</div>';
         msgDiv.appendChild(d);
@@ -865,55 +533,83 @@
     }
 
     function addBot(contenu) {
-        var pensee = '', rep = contenu;
-        if(contenu.indexOf('<thought>') !== -1 && contenu.indexOf('</thought>') !== -1) {
-            pensee = contenu.split('</thought>')[0].replace('<thought>', '').trim();
-            rep = contenu.split('</thought>')[1].trim();
+        let pensee = '', rep = contenu;
+        if (contenu.includes('<thought>') && contenu.includes('</thought>')) {
+            pensee = contenu.split('</thought>')[0].replace('<thought>','').trim();
+            rep    = contenu.split('</thought>')[1].trim();
         }
-        var id = 'w' + Date.now() + Math.random().toString(36).substr(2, 4);
-        var logo = 'https://www.hau.bi/assets/img/hope/header_logo.png';
-        var wrap = document.createElement('div');
-        wrap.className = 'msg-bot';
-        wrap.innerHTML = '<img class="hau-av" src="' + logo + '" alt="HAU" onerror="this.style.background=\'#1e6b3c\'"><div class="bot-wrap" id="' + id + '"></div>';
-        msgDiv.appendChild(wrap);
-        var w = document.getElementById(id);
-        if(pensee) {
-            w.innerHTML += '<details class="thought-block"><summary>Raisonnement</summary><div>' + marked.parse(pensee) + '</div></details>';
+        const logo = 'https://www.hau.bi/assets/img/hope/header_logo.png';
+        const d = document.createElement('div');
+        d.className = 'msg-bot';
+        const wid = 'w' + Date.now() + Math.random().toString(36).substr(2,4);
+        d.innerHTML = '<img class="hau-av" src="' + logo + '" alt="HAU" onerror="this.style.background=\'#1e6b3c\'"><div class="bot-wrap" id="' + wid + '"></div>';
+        msgDiv.appendChild(d);
+        const w = document.getElementById(wid);
+        if (pensee) {
+            const det = document.createElement('details');
+            det.className = 'thought-block';
+            det.innerHTML = '<summary>Raisonnement</summary><div>' + marked.parse(pensee) + '</div>';
+            w.appendChild(det);
         }
-        w.innerHTML += '<div class="bubble-bot">' + marked.parse(rep) + '</div><div class="msg-time">' + heure() + '</div>';
+        const bub = document.createElement('div');
+        bub.className = 'bubble-bot';
+        bub.innerHTML = marked.parse(rep);
+        w.appendChild(bub);
+        const t = document.createElement('div');
+        t.className = 'msg-time';
+        t.innerText = heure();
+        w.appendChild(t);
+        msgDiv.scrollTop = msgDiv.scrollHeight;
+    }
+
+    function addErreur(html) {
+        const logo = 'https://www.hau.bi/assets/img/hope/header_logo.png';
+        const d = document.createElement('div');
+        d.className = 'msg-bot';
+        d.innerHTML =
+            '<img class="hau-av" src="' + logo + '" alt="HAU" onerror="this.style.background=\'#1e6b3c\'">' +
+            '<div class="bot-wrap">' +
+                '<div class="bubble-error">' + html + '</div>' +
+                '<div class="msg-time">' + heure() + '</div>' +
+            '</div>';
+        msgDiv.appendChild(d);
         msgDiv.scrollTop = msgDiv.scrollHeight;
     }
 
     function qr(q) { fermer(); input.value = q; envoyer(); }
 
     function bienvenue() {
-        var logo = 'https://www.hau.bi/assets/img/hope/header_logo.png';
-        msgDiv.innerHTML =
-            '<div class="welcome-card">' +
-            '<img class="wc-logo" src="' + logo + '" alt="HAU Logo" onerror="this.style.display=\'none\'">' +
+        const logo = 'https://www.hau.bi/assets/img/hope/header_logo.png';
+        msgDiv.innerHTML = '';
+        const card = document.createElement('div');
+        card.className = 'welcome-card';
+        card.innerHTML =
+            '<img class="wc-logo" src="' + logo + '" alt="HAU" onerror="this.style.display=\'none\'">' +
             '<div class="wc-title">HAU Intelligence</div>' +
-            '<div class="wc-sub">Hope Africa University — Universite Espoir d\'Afrique</div>' +
-            '<div class="wc-desc">Assistant academique officiel — Bujumbura, Burundi<br>Bilingue Francais et English</div>' +
+            '<div class="wc-sub">Hope Africa University</div>' +
+            '<div class="wc-desc">Assistant academique officiel — Bujumbura, Burundi<br>Bilingue Francais &amp; English</div>' +
             '<div class="quick-grid">' +
-            '<button class="qbtn" onclick="qr(\'Quels sont les programmes disponibles a HAU ?\')"><span class="qbtn-icon">🏛️</span>Programmes</button>' +
-            '<button class="qbtn" onclick="qr(\'Comment s inscrire a HAU ?\')"><span class="qbtn-icon">📝</span>Inscription</button>' +
-            '<button class="qbtn" onclick="qr(\'Quelles bourses sont disponibles a HAU ?\')"><span class="qbtn-icon">💰</span>Bourses</button>' +
-            '<button class="qbtn" onclick="qr(\'Comment rediger un memoire academique ?\')"><span class="qbtn-icon">✍️</span>Memoire</button>' +
-            '<button class="qbtn" onclick="qr(\'Reglement interieur de HAU\')"><span class="qbtn-icon">📋</span>Reglement</button>' +
-            '<button class="qbtn" onclick="qr(\'Vie estudiantine et clubs a HAU\')"><span class="qbtn-icon">🎭</span>Vie Campus</button>' +
-            '<button class="qbtn" onclick="qr(\'Opportunites de recherche a HAU\')"><span class="qbtn-icon">🔬</span>Recherche</button>' +
-            '<button class="qbtn" onclick="qr(\'Histoire et mission de Hope Africa University\')"><span class="qbtn-icon">ℹ️</span>A propos</button>' +
-            '</div></div>';
+                '<button class="qbtn" onclick="qr(\'Quels sont les programmes disponibles a HAU ?\')"><span class="qbtn-icon">&#127963;</span>Programmes</button>' +
+                '<button class="qbtn" onclick="qr(\'Comment s inscrire a HAU ?\')"><span class="qbtn-icon">&#128221;</span>Inscription</button>' +
+                '<button class="qbtn" onclick="qr(\'Quelles bourses sont disponibles a HAU ?\')"><span class="qbtn-icon">&#128176;</span>Bourses</button>' +
+                '<button class="qbtn" onclick="qr(\'Comment rediger un memoire academique ?\')"><span class="qbtn-icon">&#9997;</span>Memoire</button>' +
+                '<button class="qbtn" onclick="qr(\'Reglement interieur de HAU\')"><span class="qbtn-icon">&#128203;</span>Reglement</button>' +
+                '<button class="qbtn" onclick="qr(\'Vie estudiantine et clubs a HAU\')"><span class="qbtn-icon">&#127917;</span>Vie Campus</button>' +
+                '<button class="qbtn" onclick="qr(\'Opportunites de recherche a HAU\')"><span class="qbtn-icon">&#128302;</span>Recherche</button>' +
+                '<button class="qbtn" onclick="qr(\'Histoire et mission de Hope Africa University\')"><span class="qbtn-icon">&#8505;</span>A propos</button>' +
+            '</div>';
+        msgDiv.appendChild(card);
     }
 
+    // ─── Fichier image ───
     function gererFichier(inp) {
-        if(inp.files && inp.files[0]) {
+        if (inp.files && inp.files[0]) {
             fichierJoint = inp.files[0];
-            var reader = new FileReader();
-            reader.onload = function(e) {
+            const reader = new FileReader();
+            reader.onload = e => {
                 fichierBase64 = e.target.result;
-                var prev = document.getElementById('file-preview');
-                prev.innerHTML = '<div class="prev-badge">Fichier: ' + fichierJoint.name.substring(0, 20) + ' <button onclick="retirerFichier()">&#10005;</button></div>';
+                const prev = document.getElementById('file-preview');
+                prev.innerHTML = '<div class="prev-badge">' + fichierJoint.name.substring(0,20) + ' <span onclick="retirerFichier()">X</span></div>';
                 prev.style.display = 'flex';
             };
             reader.readAsDataURL(fichierJoint);
@@ -926,96 +622,151 @@
         document.getElementById('file-preview').style.display = 'none';
     }
 
+    // ─── Appel Groq principal ───
+    const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
+
+    function systemPrompt() {
+        return 'Tu es HAU Intelligence, l assistant academique officiel de Hope Africa University (HAU) — Universite Espoir d Afrique, une universite chretienne privee a Bujumbura, Burundi.\n\nINFORMATIONS OFFICIELLES HAU :\n- Fondee en 2000 par le Rev. Elie Buconyori\n- Recteur : Rev. Dr Col de Police Servilien Nitunga\n- Affiliee a l Eglise Methodiste Libre\n- Campus : Ngagara (principal), Gishingano, Gitega\n- Contact : info@hau.bi | (+257) 22237973 | hau.bi\n\nFACULTES & PROGRAMMES :\n- Medecine generale, Soins infirmiers, Anesthesie, Dentisterie\n- Droit, Sciences politiques\n- Sciences economiques, Administration des affaires, MBA\n- Informatique, Genie civil, Ingenierie\n- Theologie, Bible\n- Communication, Travail social, Psychologie\n- Agriculture, Entrepreneuriat\n\nSERVICES EN LIGNE : E-Learning (edu.hau.bi), MIS (mis.hau.bi), Journal (journal.hau.bi), Bibliotheque (stumis.hau.bi)\n\nLANGUE DE REPONSE : ' + (langue === 'fr' ? 'FRANCAIS' : 'ENGLISH') + '\n\nSois professionnel, precis et bienveillant.';
+    }
+
+    async function appelGroq(messages, modele, maxTokens) {
+        if (!GROQ_KEY) {
+            demanderCle('Aucune cle API detectee. Entrez votre cle Groq gratuite :');
+            return null;
+        }
+        const res = await fetch(GROQ_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + GROQ_KEY
+            },
+            body: JSON.stringify({
+                model: modele || 'llama-3.3-70b-versatile',
+                messages: messages,
+                max_tokens: maxTokens || 4000,
+                temperature: 0.45
+            })
+        });
+
+        if (!res.ok) {
+            let errDetail = '';
+            try { const j = await res.json(); errDetail = j.error?.message || JSON.stringify(j); } catch(e) {}
+            const status = res.status;
+            if (status === 401) throw new Error('CLE_INVALIDE');
+            if (status === 429) throw new Error('LIMITE_ATTEINTE');
+            if (status === 400) throw new Error('REQUETE_INVALIDE: ' + errDetail);
+            throw new Error('ERREUR_' + status + ': ' + errDetail);
+        }
+
+        return await res.json();
+    }
+
+    function gererErreurGroq(err) {
+        typing.style.display = 'none';
+        const msg = err.message || '';
+        if (msg === 'CLE_INVALIDE') {
+            addErreur('<b>Cle API invalide ou expiree.</b><br>Votre cle Groq ne fonctionne pas.<br><button class="err-key-btn" onclick="changerCle()">Changer la cle</button>');
+        } else if (msg === 'LIMITE_ATTEINTE') {
+            addErreur('<b>Limite de requetes atteinte (429).</b><br>Le plan gratuit Groq a une limite par minute. Attendez 30 secondes et reessayez.');
+        } else if (msg.startsWith('REQUETE_INVALIDE')) {
+            addErreur('<b>Requete invalide (400).</b><br>' + msg.replace('REQUETE_INVALIDE: ',''));
+        } else if (msg.includes('Failed to fetch') || msg.includes('NetworkError') || msg.includes('Load failed')) {
+            addErreur('<b>Pas de connexion internet.</b><br>Verifiez votre connexion et reessayez.');
+        } else {
+            addErreur('<b>Erreur inattendue :</b> ' + msg + '<br><small>Verifiez votre cle Groq sur console.groq.com</small>');
+        }
+    }
+
+    function changerCle() {
+        localStorage.removeItem('hau_key');
+        GROQ_KEY = '';
+        demanderCle('Entrez une nouvelle cle API Groq valide (commence par gsk_) :');
+    }
+
+    // ─── Analyse image ───
     async function analyserImage(texte, b64, mime) {
         typingText.innerText = 'Analyse du document...';
         typing.style.display = 'flex';
         try {
-            var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_KEY},
-                body: JSON.stringify({
-                    model: 'meta-llama/llama-4-scout-17b-16e-instruct',
-                    messages: [{role:'user', content:[
-                        {type:'text', text: texte || ('Analyse ce document de facon professionnelle et detaillee en ' + (langue==='fr'?'francais':'anglais') + '.')},
-                        {type:'image_url', image_url:{url:'data:'+mime+';base64,'+b64}}
-                    ]}],
-                    max_tokens: 1500
-                })
-            });
-            var data = await res.json();
+            const data = await appelGroq([{
+                role: 'user',
+                content: [
+                    { type: 'text', text: texte || ('En tant qu assistant academique de HAU, analyse ce document de facon professionnelle en ' + (langue === 'fr' ? 'francais' : 'anglais') + '.') },
+                    { type: 'image_url', image_url: { url: 'data:' + mime + ';base64,' + b64 } }
+                ]
+            }], 'meta-llama/llama-4-scout-17b-16e-instruct', 1500);
+
             typing.style.display = 'none';
-            if(data.choices && data.choices[0]) {
-                var rep = data.choices[0].message.content;
+            if (data && data.choices && data.choices[0]) {
+                const rep = data.choices[0].message.content;
                 historique.push({role:'user', content: texte || 'Analyse ce document'});
                 historique.push({role:'assistant', content: rep});
                 addBot(rep);
                 sauvegarder(texte || 'Analyse document');
-            } else { addBot("Impossible d'analyser. Reessayez."); }
-        } catch(e) { typing.style.display = 'none'; addBot("Erreur d'analyse. Verifiez votre connexion."); }
+            }
+        } catch(e) {
+            gererErreurGroq(e);
+        }
     }
 
+    // ─── Generation image ───
     function detectImg(texte) {
-        var mots = ['genere','generate','dessine','create','imagine','draw','peins','fais une image'];
-        var t = texte.toLowerCase();
-        for(var i = 0; i < mots.length; i++) { if(t.indexOf(mots[i]) !== -1) return true; }
-        return false;
+        return ['genere','generate','dessine','create','imagine','draw','peins','fais une image'].some(m => texte.toLowerCase().includes(m));
     }
 
     async function genererImage(prompt) {
-        typingText.innerText = "Generation de l'image...";
-        typing.style.display = 'flex';
-        var clean = prompt.replace(/genere|generate|dessine|create|imagine|draw|peins|fais une image/gi,'').replace(/une image de|an image of|une photo de/gi,'').trim();
-        var url = 'https://image.pollinations.ai/prompt/' + encodeURIComponent(clean + ', professional, academic, university, high quality, detailed') + '?width=1024&height=1024&nologo=true&model=flux';
         typing.style.display = 'none';
         addUser(prompt);
-        var logo = 'https://www.hau.bi/assets/img/hope/header_logo.png';
-        var wrap = document.createElement('div');
-        wrap.className = 'msg-bot';
-        wrap.innerHTML =
-            '<img class="hau-av" src="'+logo+'" alt="HAU" onerror="this.style.background=\'#1e6b3c\'">' +
+        const clean = prompt.replace(/genere|generate|dessine|create|imagine|draw|peins|fais une image/gi,'').replace(/une image de|an image of|une photo de/gi,'').trim();
+        const url = 'https://image.pollinations.ai/prompt/' + encodeURIComponent(clean + ', professional, academic, university, high quality') + '?width=1024&height=1024&nologo=true&model=flux';
+        const logo = 'https://www.hau.bi/assets/img/hope/header_logo.png';
+        const d = document.createElement('div');
+        d.className = 'msg-bot';
+        d.innerHTML =
+            '<img class="hau-av" src="' + logo + '" alt="HAU" onerror="this.style.background=\'#1e6b3c\'">' +
             '<div class="bot-wrap">' +
                 '<div class="gen-img-wrap">' +
                     '<div class="gen-img-label">Image generee par HAU IA</div>' +
-                    '<img class="gen-img" src="'+url+'" loading="lazy" onclick="window.open(\''+url+'\',\'_blank\')" alt="'+clean+'">' +
+                    '<img class="gen-img" src="' + url + '" loading="lazy" alt="' + clean + '">' +
                     '<div class="img-actions">' +
-                        '<a class="img-btn" href="'+url+'" download="HAU-IA.png" target="_blank">Telecharger</a>' +
-                        '<a class="img-btn" href="'+url+'" target="_blank">Plein ecran</a>' +
+                        '<a class="img-btn" href="' + url + '" download="HAU-IA.png" target="_blank">Telecharger</a>' +
+                        '<a class="img-btn" href="' + url + '" target="_blank">Plein ecran</a>' +
                     '</div>' +
                 '</div>' +
-                '<div class="msg-time">'+heure()+'</div>' +
+                '<div class="msg-time">' + heure() + '</div>' +
             '</div>';
-        msgDiv.appendChild(wrap);
+        msgDiv.appendChild(d);
         msgDiv.scrollTop = msgDiv.scrollHeight;
         historique.push({role:'user', content: prompt});
         historique.push({role:'assistant', content: '[Image: ' + clean + ']'});
         sauvegarder(prompt);
     }
 
+    // ─── Sauvegarde ───
     function sauvegarder(texte) {
-        if(historique.length === 2) {
-            sessions.push({
-                titre: texte.substring(0, 28) + '...',
-                date: new Date().toLocaleDateString('fr-FR'),
-                messages: historique
-            });
+        if (historique.length === 2) {
+            sessions.push({titre: texte.substring(0,30), date: new Date().toLocaleDateString('fr-FR'), messages: historique});
             localStorage.setItem('hau_sessions', JSON.stringify(sessions));
             affSessions();
-        } else if(sessions.length > 0) {
-            sessions[sessions.length - 1].messages = historique;
+        } else if (sessions.length > 0) {
+            sessions[sessions.length-1].messages = historique;
             localStorage.setItem('hau_sessions', JSON.stringify(sessions));
         }
     }
 
+    // ─── Envoi message ───
     async function envoyer() {
-        var texte = input.value.trim();
-        if(!texte && !fichierJoint) return;
+        const texte = input.value.trim();
+        if (!texte && !fichierJoint) return;
         input.value = '';
 
-        if(fichierJoint && fichierBase64) {
-            var b64 = fichierBase64.split(',')[1], mime = fichierJoint.type;
-            var d = document.createElement('div');
+        // Image jointe
+        if (fichierJoint && fichierBase64) {
+            const b64  = fichierBase64.split(',')[1];
+            const mime = fichierJoint.type;
+            const d = document.createElement('div');
             d.className = 'msg-user';
-            d.innerHTML = '<div class="bubble-user"><img class="analyzed-img" src="'+fichierBase64+'"><br>'+(texte||'Analyse ce document')+'</div><div class="msg-time">'+heure()+'</div>';
+            d.innerHTML = '<div class="bubble-user"><img class="analyzed-img" src="' + fichierBase64 + '"><br>' + (texte || 'Analyse ce document') + '</div><div class="msg-time">' + heure() + '</div>';
             msgDiv.appendChild(d);
             msgDiv.scrollTop = msgDiv.scrollHeight;
             retirerFichier();
@@ -1023,71 +774,37 @@
             return;
         }
 
-        if(detectImg(texte)) { await genererImage(texte); return; }
+        // Generation image
+        if (detectImg(texte)) { await genererImage(texte); return; }
 
+        // Chat normal
         addUser(texte);
         historique.push({role:'user', content: texte});
-        typingText.innerText = 'HAU Intelligence reflechit...';
+        typingText.innerText = langue === 'fr' ? 'HAU Intelligence reflechit...' : 'HAU Intelligence is thinking...';
         typing.style.display = 'flex';
 
         try {
-            var systemPrompt = 'Tu es HAU Intelligence, l\'assistant academique officiel de Hope Africa University (HAU) — Universite Espoir d\'Afrique, une universite chretienne privee a Bujumbura, Burundi.\n\n'
-                + 'INFORMATIONS OFFICIELLES HAU :\n'
-                + '- Fondee en 2000 par le Rev. Elie Buconyori\n'
-                + '- Recteur : Rev. Dr Col de Police Servilien Nitunga\n'
-                + '- Affiliee a l\'Eglise Methodiste Libre\n'
-                + '- Campus : Ngagara (principal), Gishingano, Gitega\n'
-                + '- Contact : info@hau.bi | (+257) 22237973 | hau.bi\n'
-                + '- Accreditation : Ministere de l\'Enseignement Superieur du Burundi\n\n'
-                + 'FACULTES ET PROGRAMMES :\n'
-                + '- Medecine generale, Soins infirmiers, Anesthesie, Dentisterie\n'
-                + '- Droit, Sciences politiques\n'
-                + '- Sciences economiques, Administration des affaires, MBA\n'
-                + '- Informatique, Genie civil, Ingenierie\n'
-                + '- Theologie, Bible\n'
-                + '- Communication, Travail social, Psychologie\n'
-                + '- Agriculture, Entrepreneuriat\n\n'
-                + 'SERVICES EN LIGNE : E-Learning (edu.hau.bi), MIS (mis.hau.bi), Journal academique (journal.hau.bi), Bibliotheque (stumis.hau.bi)\n\n'
-                + 'LANGUE DE REPONSE : ' + (langue==='fr' ? 'FRANCAIS' : 'ENGLISH') + '\n\n'
-                + 'TES CAPACITES :\n'
-                + '1. Repondre aux questions sur HAU et l\'academique\n'
-                + '2. Rediger memoires, dissertations, rapports (jusqu\'a 30 pages)\n'
-                + '3. Analyser des documents et photos\n'
-                + '4. Informer sur inscriptions, frais, bourses\n'
-                + '5. Generer emplois du temps et planning\n'
-                + '6. Orienter etudiants et candidats\n'
-                + '7. Aider dans toutes les matieres universitaires\n'
-                + '8. Recherche scientifique et publications\n\n'
-                + 'Sois professionnel, precis et bienveillant.';
-
-            var messages = [{role:'system', content: systemPrompt}].concat(historique);
-
-            var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_KEY},
-                body: JSON.stringify({
-                    model: 'llama-3.3-70b-versatile',
-                    messages: messages,
-                    max_tokens: 4000,
-                    temperature: 0.45
-                })
-            });
-            var data = await res.json();
-            var rep = data.choices[0].message.content;
-            historique.push({role:'assistant', content: rep});
-            typing.style.display = 'none';
-            addBot(rep);
-            sauvegarder(texte);
+            const msgs = [
+                {role:'system', content: systemPrompt()},
+                ...historique
+            ];
+            const data = await appelGroq(msgs, 'llama-3.3-70b-versatile', 4000);
+            if (data && data.choices && data.choices[0]) {
+                const rep = data.choices[0].message.content;
+                historique.push({role:'assistant', content: rep});
+                typing.style.display = 'none';
+                addBot(rep);
+                sauvegarder(texte);
+            } else {
+                typing.style.display = 'none';
+                addErreur('<b>Reponse vide de Groq.</b> Reessayez.');
+            }
         } catch(e) {
-            typing.style.display = 'none';
-            addBot("Connexion interrompue. Veuillez reessayer.");
+            gererErreurGroq(e);
         }
     }
 
-    input.addEventListener('keypress', function(e) {
-        if(e.key === 'Enter' && !e.shiftKey) envoyer();
-    });
-
+    input.addEventListener('keypress', e => { if (e.key === 'Enter' && !e.shiftKey) envoyer(); });
     affSessions();
     bienvenue();
 </script>
