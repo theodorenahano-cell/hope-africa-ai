@@ -1,0 +1,760 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>HAU Intelligence — Hope Africa University</title>
+    <meta name="theme-color" content="#060d1a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="https://www.hau.bi/assets/img/hope/header_logo.png">
+    <link rel="icon" href="https://www.hau.bi/assets/img/hope/header_logo.png">
+    <link rel="manifest" id="pwa-manifest">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- FIX: DOMPurify pour sécuriser le HTML généré par marked -->
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+    <style>
+        :root{--green:#1e6b3c;--green2:#2a8a50;--green3:#4caf75;--bg:#060d1a;--bg2:#0d1a2e;--bg3:#0a1525;--bg4:#112035;--bg5:#0f2240;--border:#1a2a3a;--border2:#1e3a4a;--text:#e3e3e3;--text2:#778899;--text3:#334455;}
+        *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+        body{cursor:none;font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:var(--text);display:flex;height:100vh;height:-webkit-fill-available;overflow:hidden;}
+        /* FIX SCROLL — zones défilables avec curseur natif pour que la molette fonctionne */
+        #messages,#historique,.img-panel-box{cursor:default;overflow-y:auto;}
+        @media(hover:none){body{cursor:auto;}}
+        #cur-o{position:fixed;width:36px;height:36px;border:1.5px solid var(--green3);border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:width .25s,height .25s,border-color .25s,opacity .2s;opacity:0;}
+        #cur-i{position:fixed;width:7px;height:7px;background:var(--green3);border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:transform .08s,background .2s,opacity .2s;opacity:0;}
+        body.cur-on #cur-o,body.cur-on #cur-i{opacity:1;}
+        body.cur-lnk #cur-o{width:50px;height:50px;border-color:#f0c040;}
+        body.cur-lnk #cur-i{background:#f0c040;transform:translate(-50%,-50%) scale(1.5);}
+        body.cur-clk #cur-i{transform:translate(-50%,-50%) scale(0.5);}
+        #sidebar{width:272px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:1100;flex-shrink:0;}
+        .sb-header{padding:18px 16px;padding-top:max(18px,env(safe-area-inset-top,0px));background:var(--bg3);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0;}
+        .sb-logo{width:38px;height:38px;object-fit:contain;border-radius:10px;background:white;padding:4px;flex-shrink:0;box-shadow:0 0 0 1px #1e6b3c44,0 4px 12px #0005;}
+        .sb-logo-text h2{color:#fff;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;}
+        .sb-logo-text p{color:var(--green3);font-size:10px;margin-top:2px;font-weight:300;}
+        .sb-nav{padding:8px 10px;flex-shrink:0;}
+        .sb-section-title{color:var(--text3);font-size:9px;text-transform:uppercase;letter-spacing:2.5px;font-weight:700;padding:10px 8px 5px;font-family:'Syne',sans-serif;}
+        .nav-item{padding:9px 12px;border-radius:10px;cursor:none;color:var(--text2);font-size:13px;display:flex;align-items:center;gap:10px;transition:background .18s,color .18s;position:relative;overflow:hidden;}
+        .nav-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--green3);border-radius:0 2px 2px 0;transform:scaleY(0);transition:transform .18s;}
+        .nav-item:hover{background:var(--bg4);color:#fff;}
+        .nav-item:hover::before{transform:scaleY(1);}
+        .nav-icon{font-size:15px;flex-shrink:0;width:20px;text-align:center;}
+        #historique{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:0 10px 10px;scroll-behavior:smooth;}
+        .hist-section-title{color:var(--text3);font-size:9px;text-transform:uppercase;letter-spacing:2.5px;font-weight:700;padding:10px 8px 5px;font-family:'Syne',sans-serif;}
+        .session{padding:9px 11px;margin:3px 0;border-radius:10px;cursor:none;color:var(--text2);font-size:12px;display:flex;align-items:center;gap:9px;transition:background .18s;border:1px solid transparent;-webkit-user-select:none;user-select:none;}
+        .session:hover{background:var(--bg4);color:#fff;border-color:#1e6b3c22;}
+        .sess-icon{width:28px;height:28px;border-radius:8px;background:var(--bg4);border:1px solid #1e6b3c33;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+        .sess-icon-lines{display:flex;flex-direction:column;gap:3px;width:12px;}
+        .sess-icon-lines span{display:block;height:1.5px;background:var(--green3);border-radius:1px;width:100%;}
+        .sess-icon-lines span:last-child{width:65%;}
+        .sess-inner{flex:1;overflow:hidden;}
+        .sess-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px;font-weight:500;}
+        .sess-date{font-size:9px;color:var(--text3);margin-top:2px;}
+        .sess-del{width:20px;height:20px;border-radius:50%;background:transparent;border:none;color:var(--text3);font-size:13px;cursor:none;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;transition:all .18s;}
+        .sess-del:hover{background:#ff4a4a22;color:#ff4a4a;}
+        .hist-empty{text-align:center;color:var(--text3);font-size:11px;padding:24px 10px;line-height:1.7;}
+        .sb-bottom{padding:10px;padding-bottom:max(10px,env(safe-area-inset-bottom,0px));border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px;flex-shrink:0;}
+        .s-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:9px 12px;border-radius:10px;font-size:12px;cursor:none;text-align:left;width:100%;transition:all .18s;font-family:'DM Sans',sans-serif;}
+        .s-btn:hover{background:var(--bg4);color:#fff;border-color:var(--border2);}
+        #main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+        #header{background:#060d1aee;backdrop-filter:blur(16px);padding:10px 18px;padding-top:max(10px,env(safe-area-inset-top,0px));display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-shrink:0;}
+        .h-left{display:flex;align-items:center;gap:11px;}
+        #menu-btn{background:transparent;border:none;cursor:none;width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0;flex-shrink:0;transition:background .18s;}
+        #menu-btn:hover{background:var(--bg4);}
+        .hamburger{display:flex;flex-direction:column;gap:5px;width:20px;pointer-events:none;}
+        .hamburger span{display:block;width:20px;height:2px;background:var(--text2);border-radius:2px;transition:background .18s;}
+        #menu-btn:hover .hamburger span{background:#fff;}
+        .h-logo-wrap{position:relative;}
+        .h-logo{width:34px;height:34px;object-fit:contain;border-radius:8px;background:white;padding:3px;}
+        .h-dot{position:absolute;bottom:-2px;right:-2px;width:10px;height:10px;background:#00cc66;border-radius:50%;border:2px solid var(--bg);animation:blink 2.5s infinite;}
+        @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+        .h-text h1{color:#fff;font-size:15px;font-weight:700;line-height:1.2;font-family:'Syne',sans-serif;}
+        .h-text p{color:var(--green3);font-size:10px;margin-top:1px;font-weight:300;}
+        .h-right{display:flex;align-items:center;gap:8px;}
+        .lang-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:6px 12px;border-radius:8px;cursor:none;font-size:11px;font-weight:700;transition:all .18s;font-family:'Syne',sans-serif;}
+        .lang-btn:hover{background:var(--bg4);color:#fff;}
+        .badge{background:linear-gradient(135deg,var(--green),var(--green2));color:white;padding:4px 10px;border-radius:6px;font-size:10px;font-weight:800;letter-spacing:1px;font-family:'Syne',sans-serif;box-shadow:0 2px 8px #1e6b3c55;}
+        #overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1050;backdrop-filter:blur(2px);}
+        #overlay.open{display:block;}
+        #messages{flex:1;overflow-y:auto;overflow-x:hidden;padding:20px 16px;display:flex;flex-direction:column;gap:18px;-webkit-overflow-scrolling:touch;scroll-behavior:smooth;}
+        .welcome-card{background:linear-gradient(160deg,var(--bg3) 0%,var(--bg4) 100%);border:1px solid #1e3a2a;border-radius:20px;padding:28px 18px;text-align:center;box-shadow:0 8px 40px #00000055;}
+        .wc-logo{width:72px;height:72px;object-fit:contain;border-radius:16px;background:white;padding:9px;margin:0 auto 16px;display:block;box-shadow:0 4px 20px #1e6b3c44;}
+        .wc-title{color:#fff;font-size:22px;font-weight:800;margin-bottom:3px;font-family:'Syne',sans-serif;}
+        .wc-sub{color:var(--green3);font-size:12px;margin-bottom:6px;}
+        .wc-desc{color:var(--text2);font-size:12px;margin-bottom:20px;line-height:1.6;}
+        .quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+        .qbtn{background:var(--bg4);border:1px solid var(--border);color:var(--text2);padding:11px 10px;border-radius:12px;font-size:12px;cursor:none;text-align:left;display:flex;align-items:center;gap:7px;transition:all .18s;font-family:'DM Sans',sans-serif;}
+        .qbtn:hover{background:var(--bg5);color:#fff;border-color:#1e6b3c66;transform:translateY(-1px);box-shadow:0 4px 16px #0004;}
+        .qbtn-icon{font-size:16px;flex-shrink:0;}
+        .msg-user{align-self:flex-end;max-width:80%;}
+        .msg-bot{align-self:flex-start;max-width:100%;display:flex;gap:11px;align-items:flex-start;width:100%;}
+        .hau-av{width:34px;height:34px;object-fit:contain;border-radius:8px;background:white;padding:3px;flex-shrink:0;box-shadow:0 2px 8px #0004;}
+        .bubble-user{background:linear-gradient(135deg,var(--green),var(--green2));color:white;padding:11px 15px;border-radius:18px 18px 4px 18px;font-size:14px;line-height:1.55;word-wrap:break-word;box-shadow:0 4px 16px #1e6b3c33;}
+        .bot-wrap{display:flex;flex-direction:column;gap:8px;flex:1;overflow:hidden;min-width:0;}
+        .thought-block{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--text3);}
+        .thought-block summary{cursor:none;font-weight:600;color:var(--green3);outline:none;}
+        .bubble-bot{color:var(--text);font-size:14.5px;line-height:1.7;width:100%;word-wrap:break-word;}
+        .bubble-bot p{margin-bottom:9px;}.bubble-bot p:last-child{margin-bottom:0;}
+        .bubble-bot ul,.bubble-bot ol{padding-left:18px;margin-bottom:9px;}
+        .bubble-bot li{margin-bottom:5px;}
+        .bubble-bot h1,.bubble-bot h2,.bubble-bot h3{color:#fff;margin:12px 0 6px;font-family:'Syne',sans-serif;}
+        .bubble-bot code{background:var(--bg3);padding:2px 7px;border-radius:5px;font-size:13px;color:var(--green3);}
+        .bubble-bot pre{background:var(--bg3);padding:14px;border-radius:10px;overflow-x:auto;margin-bottom:9px;border:1px solid var(--border);}
+        .bubble-bot pre code{background:none;padding:0;}
+        .bubble-bot strong{color:#fff;}
+        .msg-time{font-size:10px;color:var(--text3);margin-top:4px;}
+
+        /* IMAGE PANEL */
+        #img-panel{position:fixed;inset:0;z-index:2000;background:rgba(6,13,26,.96);backdrop-filter:blur(20px);display:none;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s ease;}
+        #img-panel.open{display:flex;}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+        .img-panel-box{background:var(--bg2);border:1px solid var(--border2);border-radius:20px;width:100%;max-width:620px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 80px #000a;animation:slideUp .25s ease;}
+        @keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+        .ip-header{padding:18px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+        .ip-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:#fff;}
+        .ip-close{background:var(--bg4);border:1px solid var(--border);color:var(--text2);width:32px;height:32px;border-radius:8px;cursor:none;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all .18s;}
+        .ip-close:hover{background:#ff4a4a22;color:#ff4a4a;border-color:#ff4a4a44;}
+        .ip-body{padding:20px;display:flex;flex-direction:column;gap:16px;}
+        .drop-zone{border:2px dashed var(--border2);border-radius:16px;padding:32px 20px;text-align:center;cursor:none;transition:all .2s;background:var(--bg3);position:relative;overflow:hidden;}
+        .drop-zone.drag-over{border-color:var(--green3);background:#1e6b3c0d;}
+        .drop-zone input[type=file]{display:none;}
+        .dz-icon{font-size:44px;margin-bottom:12px;display:block;}
+        .dz-label{color:#fff;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:5px;}
+        .dz-sub{color:var(--text2);font-size:12px;margin-bottom:16px;}
+        .dz-btn{background:linear-gradient(135deg,var(--green),var(--green2));color:white;border:none;padding:10px 24px;border-radius:10px;font-size:13px;cursor:none;font-family:'DM Sans',sans-serif;font-weight:500;transition:opacity .18s;box-shadow:0 4px 16px #1e6b3c44;}
+        .dz-btn:hover{opacity:.88;}
+        .dz-formats{color:var(--text3);font-size:10px;margin-top:12px;}
+        .ip-preview{display:none;flex-direction:column;gap:13px;}
+        .ip-preview.show{display:flex;}
+        .ip-img-wrap{position:relative;border-radius:14px;overflow:hidden;background:var(--bg3);border:1px solid var(--border);}
+        .ip-img-wrap img{width:100%;max-height:260px;object-fit:contain;display:block;}
+        .ip-img-remove{position:absolute;top:8px;right:8px;background:#000a;backdrop-filter:blur(6px);border:1px solid #fff2;color:#fff;width:28px;height:28px;border-radius:50%;cursor:none;font-size:14px;display:flex;align-items:center;justify-content:center;transition:background .18s;}
+        .ip-img-remove:hover{background:#ff4a4a99;}
+        .ip-img-info{font-size:11px;color:var(--text2);padding:2px 0;}
+        .ip-prompt-row{display:flex;flex-direction:column;gap:9px;}
+        .ip-prompt-label{font-size:10px;color:var(--green3);font-weight:700;font-family:'Syne',sans-serif;letter-spacing:.8px;}
+        .ip-shortcuts{display:flex;flex-wrap:wrap;gap:6px;}
+        .ip-shortcut{background:var(--bg4);border:1px solid var(--border);color:var(--text2);padding:5px 11px;border-radius:20px;font-size:11px;cursor:none;transition:all .18s;font-family:'DM Sans',sans-serif;}
+        .ip-shortcut:hover{border-color:var(--green3);color:var(--green3);}
+        .ip-shortcut.active{background:#1e6b3c22;border-color:var(--green3);color:var(--green3);}
+        .ip-textarea{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:11px 14px;border-radius:12px;font-size:13px;font-family:'DM Sans',sans-serif;resize:none;outline:none;width:100%;transition:border-color .18s;line-height:1.5;}
+        .ip-textarea:focus{border-color:var(--green);}
+        .ip-textarea::placeholder{color:var(--text3);}
+        .ip-analyze-btn{background:linear-gradient(135deg,var(--green),var(--green2));color:white;border:none;padding:13px 24px;border-radius:12px;font-size:14px;cursor:none;font-family:'Syne',sans-serif;font-weight:700;width:100%;display:flex;align-items:center;justify-content:center;gap:10px;transition:opacity .18s,transform .18s;box-shadow:0 4px 20px #1e6b3c55;}
+        .ip-analyze-btn:hover{opacity:.9;transform:translateY(-1px);}
+        .ip-analyze-btn:disabled{opacity:.5;cursor:none;transform:none;}
+        .spinner{width:16px;height:16px;border:2px solid #fff4;border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .ip-result{display:none;background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:16px;}
+        .ip-result.show{display:block;}
+        .ip-result-label{font-size:10px;color:var(--green3);font-weight:700;font-family:'Syne',sans-serif;letter-spacing:.8px;margin-bottom:11px;}
+        .ip-result-content{color:var(--text);font-size:13.5px;line-height:1.7;}
+        .ip-result-content p{margin-bottom:8px;}.ip-result-content p:last-child{margin-bottom:0;}
+        .ip-result-content ul,.ip-result-content ol{padding-left:18px;margin-bottom:8px;}
+        .ip-result-content strong{color:#fff;}
+        .ip-result-content code{background:var(--bg4);padding:2px 6px;border-radius:4px;font-size:12px;color:var(--green3);}
+        .ip-result-actions{display:flex;gap:8px;margin-top:13px;flex-wrap:wrap;}
+        .ip-act-btn{background:var(--bg4);border:1px solid var(--border);color:var(--text2);padding:7px 14px;border-radius:8px;font-size:12px;cursor:none;transition:all .18s;font-family:'DM Sans',sans-serif;}
+        .ip-act-btn:hover{background:var(--bg5);color:#fff;border-color:var(--green);}
+
+        #typing{display:none;padding:0 16px 10px;align-items:center;gap:10px;flex-shrink:0;}
+        .typing-av{width:28px;height:28px;object-fit:contain;border-radius:7px;background:white;padding:2px;}
+        .typing-dots{display:flex;gap:4px;}
+        .typing-dots span{width:6px;height:6px;background:var(--green3);border-radius:50%;animation:bounce 1.3s infinite;}
+        .typing-dots span:nth-child(2){animation-delay:.2s}.typing-dots span:nth-child(3){animation-delay:.4s}
+        @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-7px)}}
+        .typing-text{color:var(--text3);font-size:12px;font-style:italic;}
+        #input-container{padding:8px 16px;padding-bottom:max(12px,env(safe-area-inset-bottom,0px));background:var(--bg);border-top:1px solid var(--border);flex-shrink:0;}
+        #file-preview{display:none;margin-bottom:7px;flex-wrap:wrap;gap:4px;}
+        .prev-badge{background:var(--bg3);border:1px solid var(--border);color:var(--green3);padding:4px 10px;border-radius:8px;font-size:11px;display:flex;align-items:center;gap:6px;}
+        .prev-badge span{cursor:none;color:var(--text3);font-size:14px;}
+        .input-row{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:5px 6px;transition:border-color .18s;}
+        .input-row:focus-within{border-color:var(--green);}
+        #msg-input{flex:1;padding:8px 5px;border:none;background:transparent;color:var(--text);font-size:15px;outline:none;font-family:'DM Sans',sans-serif;}
+        #msg-input::placeholder{color:var(--text3);}
+        .ibtn{background:transparent;border:none;color:var(--text2);font-size:18px;cursor:none;width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .18s;}
+        .ibtn:hover{background:var(--bg4);color:#fff;}
+        #send-btn{background:linear-gradient(135deg,var(--green),var(--green2));color:white;border-radius:11px;box-shadow:0 2px 10px #1e6b3c44;}
+        #send-btn:hover{opacity:.9;}
+        .gen-img-wrap{display:flex;flex-direction:column;gap:8px;}
+        .gen-img-label{font-size:11px;color:var(--green3);font-weight:600;font-family:'Syne',sans-serif;}
+        .gen-img{max-width:100%;border-radius:14px;border:1px solid var(--border);cursor:none;display:block;transition:transform .2s;}
+        .gen-img:hover{transform:scale(1.01);}
+        .img-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;}
+        .img-btn{background:var(--bg2);border:1px solid #1e6b3c33;color:var(--green3);padding:6px 13px;border-radius:8px;font-size:12px;text-decoration:none;display:inline-flex;align-items:center;gap:5px;cursor:none;transition:all .18s;}
+        .img-btn:hover{border-color:var(--green3);background:#1e6b3c11;}
+        .analyzed-img{max-width:100%;border-radius:10px;margin-bottom:6px;border:1px solid var(--border);display:block;}
+        ::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+        /* Taille limite image trop grande */
+        .img-size-warn{color:#f0c040;font-size:11px;padding:6px 10px;background:#f0c04011;border-radius:8px;border:1px solid #f0c04033;}
+
+        @media(max-width:900px){
+            body{flex-direction:column;cursor:auto;}
+            #cur-o,#cur-i{display:none;}
+            #sidebar{position:fixed;top:0;left:-300px;bottom:0;width:290px;height:100%;transition:left .3s cubic-bezier(.4,0,.2,1);z-index:1100;overflow-y:hidden;}
+            #sidebar.open{left:0;box-shadow:4px 0 40px rgba(0,0,0,.7);}
+            .nav-item,.session,.qbtn,.s-btn,.ibtn,.dz-btn,.ip-close,.ip-shortcut,.ip-analyze-btn,.ip-act-btn,.sess-del,.img-btn,.lang-btn,.ip-img-remove{cursor:pointer;}
+            #messages{padding:12px;}
+            #input-container{padding:6px 12px;padding-bottom:max(10px,env(safe-area-inset-bottom,0px));}
+        }
+        @media(min-width:901px){
+            #menu-btn{display:none;}
+            #messages{padding:22px 10%;}
+            #input-container{padding:8px 10% 20px;}
+        }
+        @supports(padding-top:env(safe-area-inset-top)){
+            #header{padding-top:max(10px,env(safe-area-inset-top));}
+            #sidebar .sb-header{padding-top:max(18px,env(safe-area-inset-top));}
+        }
+    </style>
+</head>
+<body>
+<div id="cur-o"></div>
+<div id="cur-i"></div>
+<div id="overlay" onclick="fermer()"></div>
+
+<!-- IMAGE ANALYSIS PANEL -->
+<div id="img-panel">
+  <div class="img-panel-box">
+    <div class="ip-header">
+      <div class="ip-title">🔬 Analyse d'Image IA</div>
+      <button class="ip-close" onclick="fermerPanel()">✕</button>
+    </div>
+    <div class="ip-body">
+      <div class="drop-zone" id="drop-zone" onclick="document.getElementById('panel-file').click()">
+        <input type="file" id="panel-file" accept="image/*" onchange="onPanelFile(this)">
+        <span class="dz-icon">🖼️</span>
+        <div class="dz-label">Glissez votre image ici</div>
+        <div class="dz-sub">ou cliquez pour choisir un fichier</div>
+        <button class="dz-btn" onclick="event.stopPropagation();document.getElementById('panel-file').click()">Parcourir</button>
+        <div class="dz-formats">JPG · PNG · WEBP · GIF · BMP</div>
+      </div>
+      <div class="ip-preview" id="ip-preview">
+        <div class="ip-img-wrap">
+          <img id="ip-img" src="" alt="Apercu">
+          <button class="ip-img-remove" onclick="resetPanel()">✕</button>
+        </div>
+        <div class="ip-img-info" id="ip-img-info"></div>
+        <div class="ip-prompt-row">
+          <div class="ip-prompt-label">✦ TYPE D'ANALYSE</div>
+          <div class="ip-shortcuts">
+            <button class="ip-shortcut" onclick="setShortcut(this,'Analyse ce document de façon professionnelle et détaillée.')">📄 Document</button>
+            <button class="ip-shortcut" onclick="setShortcut(this,'Lis et transcris tout le texte visible dans cette image.')">📝 Transcription</button>
+            <button class="ip-shortcut" onclick="setShortcut(this,'Explique et résous les problèmes mathématiques ou scientifiques visibles.')">🧮 Maths</button>
+            <button class="ip-shortcut" onclick="setShortcut(this,'Décris cette image en détail et identifie tous les éléments visibles.')">🔍 Description</button>
+            <button class="ip-shortcut" onclick="setShortcut(this,'Analyse ce graphique ou tableau et extrais les données et tendances clés.')">📊 Graphique</button>
+            <button class="ip-shortcut" onclick="setShortcut(this,'Corrige les erreurs et améliore le texte visible dans cette image.')">✏️ Correction</button>
+          </div>
+          <textarea class="ip-textarea" id="ip-prompt" rows="3" placeholder="Décrivez ce que vous souhaitez analyser dans cette image..."></textarea>
+        </div>
+        <button class="ip-analyze-btn" id="ip-analyze-btn" onclick="lancerAnalyse()">
+          <span>🔬 Analyser avec HAU IA</span>
+        </button>
+        <div class="ip-result" id="ip-result">
+          <div class="ip-result-label">✦ RÉSULTAT DE L'ANALYSE</div>
+          <div class="ip-result-content" id="ip-result-content"></div>
+          <div class="ip-result-actions">
+            <button class="ip-act-btn" onclick="envoyerResultatChat()">💬 Envoyer dans le chat</button>
+            <button class="ip-act-btn" id="copy-btn" onclick="copierResultat()">📋 Copier</button>
+            <button class="ip-act-btn" onclick="resetPanel()">🔄 Nouvelle analyse</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="sidebar">
+  <div class="sb-header">
+    <img class="sb-logo" src="https://www.hau.bi/assets/img/hope/header_logo.png" alt="HAU" onerror="this.style.display='none'">
+    <div class="sb-logo-text"><h2>HAU Intelligence</h2><p>Assistant Académique IA</p></div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-section-title">Navigation</div>
+    <div class="nav-item" onclick="nouveau()"><span class="nav-icon">✏️</span>Nouvelle conversation</div>
+    <div class="nav-item" onclick="qr('Quels sont les programmes et facultés disponibles à HAU ?')"><span class="nav-icon">🏛️</span>Programmes</div>
+    <div class="nav-item" onclick="qr('Comment s\'inscrire à HAU ? Quels sont les documents requis ?')"><span class="nav-icon">📝</span>Inscription</div>
+    <div class="nav-item" onclick="qr('Quelles bourses d\'études sont disponibles à HAU ?')"><span class="nav-icon">💰</span>Bourses</div>
+    <div class="nav-item" onclick="qr('Quelles sont les activités parascolaires et la vie estudiantine à HAU ?')"><span class="nav-icon">🎭</span>Vie Campus</div>
+    <div class="nav-item" onclick="qr('Quelles sont les opportunités de recherche scientifique à HAU ?')"><span class="nav-icon">🔬</span>Recherche</div>
+    <div class="nav-item" onclick="qr('Parle-moi de l\'histoire, la mission et la vision de Hope Africa University.')"><span class="nav-icon">ℹ️</span>À propos de HAU</div>
+    <div class="nav-item" onclick="ouvrirPanel()"><span class="nav-icon">🖼️</span>Analyser une image</div>
+  </div>
+  <div id="historique">
+    <div class="hist-section-title">Historique</div>
+    <div id="hist-liste"><div class="hist-empty">Aucune conversation<br>sauvegardée</div></div>
+  </div>
+  <div class="sb-bottom">
+    <button id="btn-install" class="s-btn" onclick="installer()">📲 Installer l'app</button>
+    <button class="s-btn" onclick="telecharger()">⬇️ Télécharger</button>
+  </div>
+</div>
+
+<div id="main">
+  <div id="header">
+    <div class="h-left">
+      <button id="menu-btn" onclick="ouvrir()"><div class="hamburger"><span></span><span></span><span></span></div></button>
+      <div class="h-logo-wrap">
+        <img class="h-logo" src="https://www.hau.bi/assets/img/hope/header_logo.png" alt="HAU" onerror="this.style.display='none'">
+        <div class="h-dot"></div>
+      </div>
+      <div class="h-text"><h1>HAU Intelligence</h1><p>Hope Africa University</p></div>
+    </div>
+    <div class="h-right">
+      <button class="lang-btn" onclick="changerLangue()" id="lang-btn">FR</button>
+      <div class="badge">IA</div>
+    </div>
+  </div>
+  <div id="messages"></div>
+  <div id="typing">
+    <img class="typing-av" src="https://www.hau.bi/assets/img/hope/header_logo.png" alt="HAU" onerror="this.style.background='#1e6b3c'">
+    <div class="typing-dots"><span></span><span></span><span></span></div>
+    <span class="typing-text" id="typing-text">HAU Intelligence réfléchit...</span>
+  </div>
+  <div id="input-container">
+    <div id="input-zone">
+      <div id="file-preview"></div>
+      <div class="input-row">
+        <button class="ibtn" onclick="ouvrirPanel()" title="Analyser une image">🖼️</button>
+        <input id="msg-input" type="text" placeholder="Posez votre question à HAU IA..." inputmode="text" autocomplete="off" autocorrect="off" spellcheck="false">
+        <button id="send-btn" class="ibtn" onclick="envoyer()">➤</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// =====================================================================
+// FIX 1 — CLÉ API : ne jamais mettre une clé secrète en clair côté
+//          client. Remplacez par votre propre clé dans un proxy backend.
+//          Pour l'instant on la lit depuis une variable d'environnement
+//          simulée (à remplacer par un appel backend sécurisé).
+// =====================================================================
+const GROQ_KEY = window.__GROQ_KEY__ || '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';
+
+// FIX 2 — Utilitaire de sanitisation HTML (via DOMPurify)
+function safe(html){
+  return (typeof DOMPurify !== 'undefined') ? DOMPurify.sanitize(html) : html;
+}
+
+// FIX 3 — Utilitaire : échappe le texte brut avant insertion innerHTML
+function escHtml(t){
+  return String(t)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+// FIX 4 — Taille max image : 4 Mo (évite surcharge mémoire / API)
+const MAX_IMAGE_SIZE = 4 * 1024 * 1024;
+
+// ===== CUSTOM CURSOR =====
+(function(){
+  if(window.matchMedia('(hover:none)').matches)return;
+  const co=document.getElementById('cur-o'),ci=document.getElementById('cur-i');
+  let tx=-200,ty=-200,ox=-200,oy=-200,ready=false;
+  const HOVER='a,button,[onclick],.nav-item,.qbtn,.session,.s-btn,.ibtn,.dz-btn,.ip-close,.ip-shortcut,.ip-analyze-btn,.ip-act-btn,.sess-del,.img-btn,.lang-btn,.gen-img,.drop-zone,summary,input,textarea,.ip-img-remove';
+  // FIX SCROLL — la molette doit scroller normalement même avec cursor:none
+  ['#messages','#historique','.img-panel-box'].forEach(sel=>{
+    const el=document.querySelector(sel);
+    if(!el)return;
+    el.addEventListener('wheel',e=>{e.stopPropagation();},{passive:true});
+  });
+  document.addEventListener('mousemove',e=>{
+    tx=e.clientX;ty=e.clientY;
+    ci.style.left=tx+'px';ci.style.top=ty+'px';
+    if(!ready){ready=true;document.body.classList.add('cur-on');}
+  });
+  (function loop(){
+    ox+=(tx-ox)*0.13;oy+=(ty-oy)*0.13;
+    co.style.left=ox+'px';co.style.top=oy+'px';
+    requestAnimationFrame(loop);
+  })();
+  document.addEventListener('mousedown',()=>document.body.classList.add('cur-clk'));
+  document.addEventListener('mouseup',()=>document.body.classList.remove('cur-clk'));
+  document.addEventListener('mouseover',e=>{if(e.target.closest(HOVER))document.body.classList.add('cur-lnk');});
+  document.addEventListener('mouseout',e=>{if(e.target.closest(HOVER))document.body.classList.remove('cur-lnk');});
+})();
+
+// ===== PWA =====
+const mf={name:"HAU Intelligence",short_name:"HAU IA",start_url:window.location.href,display:"standalone",orientation:"portrait-primary",background_color:"#060d1a",theme_color:"#1e6b3c",icons:[{src:"https://www.hau.bi/assets/img/hope/header_logo.png",sizes:"192x192",type:"image/png",purpose:"any maskable"},{src:"https://www.hau.bi/assets/img/hope/header_logo.png",sizes:"512x512",type:"image/png",purpose:"any maskable"}]};
+document.getElementById('pwa-manifest').href="data:application/manifest+json,"+encodeURIComponent(JSON.stringify(mf));
+
+let langue=localStorage.getItem('hau_langue')||'fr';
+document.getElementById('lang-btn').innerText=langue.toUpperCase();
+let installPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;});
+
+function installer(){
+  const ua=navigator.userAgent.toLowerCase(),lien=window.location.href;
+  if(installPrompt){installPrompt.prompt();return;}
+  if(/iphone|ipad|ipod/.test(ua)){alert('Sur iPhone/iPad :\n1. Bouton Partager (Safari)\n2. "Sur l\'écran d\'accueil"\n3. "Ajouter"');}
+  else if(/android/.test(ua)){navigator.clipboard.writeText(lien).then(()=>alert('Lien copié ! Ouvrez Chrome > Menu > "Ajouter à l\'écran d\'accueil"'));}
+  else{navigator.clipboard.writeText(lien).then(()=>alert('Lien copié !'));}
+}
+
+function changerLangue(){
+  langue=langue==='fr'?'en':'fr';
+  localStorage.setItem('hau_langue',langue);
+  document.getElementById('lang-btn').innerText=langue.toUpperCase();
+  document.getElementById('msg-input').placeholder=langue==='fr'?'Posez votre question à HAU IA...':'Ask your question to HAU AI...';
+  addBot(langue==='fr'?'Langue changée en **Français**.':'Language changed to **English**.');
+}
+
+function telecharger(){
+  try{
+    const html='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+    const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;a.download='HAU_Intelligence.html';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+  }catch(e){alert('Erreur téléchargement.');}
+}
+
+const sidebar=document.getElementById('sidebar'),overlay=document.getElementById('overlay');
+function ouvrir(){sidebar.classList.add('open');overlay.classList.add('open');}
+function fermer(){sidebar.classList.remove('open');overlay.classList.remove('open');}
+
+marked.setOptions({gfm:true,breaks:true});
+const msgDiv=document.getElementById('messages'),input=document.getElementById('msg-input');
+const typing=document.getElementById('typing'),typingText=document.getElementById('typing-text');
+const histListe=document.getElementById('hist-liste');
+
+// FIX 5 — currentSessionIndex permet de savoir quelle session on modifie
+let historique=[],sessions=[],currentSessionIndex=-1;
+try{sessions=JSON.parse(localStorage.getItem('hau_sessions')||'[]');}catch(e){sessions=[];}
+
+function heure(){return new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});}
+
+function affSessions(){
+  if(!sessions.length){histListe.innerHTML='<div class="hist-empty">Aucune conversation<br>sauvegardée</div>';return;}
+  histListe.innerHTML='';
+  sessions.slice().reverse().forEach((s,i)=>{
+    const idx=sessions.length-1-i;
+    const div=document.createElement('div');div.className='session';
+    // FIX 6 — escHtml sur le titre pour éviter XSS depuis localStorage
+    div.innerHTML='<div class="sess-icon"><div class="sess-icon-lines"><span></span><span></span><span></span></div></div>'
+      +'<div class="sess-inner"><div class="sess-title">'+escHtml(s.titre||'Discussion')+'</div>'
+      +'<div class="sess-date">'+escHtml(s.date||'')+'</div></div>'
+      +'<button class="sess-del" title="Supprimer">✕</button>';
+    div.addEventListener('click',e=>{
+      if(e.target.classList.contains('sess-del')){e.stopPropagation();supprimerSession(idx);return;}
+      charger(idx);fermer();
+    });
+    histListe.appendChild(div);
+  });
+}
+
+function supprimerSession(idx){
+  sessions.splice(idx,1);
+  // FIX 7 — recalcule currentSessionIndex après suppression
+  if(currentSessionIndex===idx) currentSessionIndex=-1;
+  else if(currentSessionIndex>idx) currentSessionIndex--;
+  localStorage.setItem('hau_sessions',JSON.stringify(sessions));affSessions();
+}
+
+function charger(i){
+  if(!sessions[i])return;
+  // FIX 8 — on mémorise l'index de la session chargée
+  currentSessionIndex=i;
+  historique=sessions[i].messages||[];msgDiv.innerHTML='';
+  historique.forEach(m=>{
+    if(m.role==='user') addUser(m.content);
+    if(m.role==='assistant') addBot(m.content);
+  });
+}
+
+function nouveau(){
+  // FIX 9 — sauvegarder la session en cours avant d'en créer une nouvelle
+  sauvegarderSession();
+  historique=[];currentSessionIndex=-1;msgDiv.innerHTML='';bienvenue();
+}
+
+// FIX 10 — addUser : on échappe le texte brut (pas de HTML arbitraire)
+function addUser(t){
+  const d=document.createElement('div');d.className='msg-user';
+  d.innerHTML='<div class="bubble-user">'+escHtml(t)+'</div><div class="msg-time">'+heure()+'</div>';
+  msgDiv.appendChild(d);msgDiv.scrollTop=msgDiv.scrollHeight;
+}
+
+// FIX 11 — addBot utilise DOMPurify sur le HTML produit par marked
+function addBot(contenu){
+  let pensee='',rep=contenu;
+  if(contenu.includes('<thought>')&&contenu.includes('</thought>')){
+    pensee=contenu.split('</thought>')[0].replace('<thought>','').trim();
+    rep=contenu.split('</thought>')[1].trim();
+  }
+  const id='w'+Date.now()+Math.random().toString(36).substr(2,4);
+  const logo='https://www.hau.bi/assets/img/hope/header_logo.png';
+  const wrap=document.createElement('div');wrap.className='msg-bot';
+  wrap.innerHTML='<img class="hau-av" src="'+logo+'" alt="HAU" onerror="this.style.background=\'#1e6b3c\'"><div class="bot-wrap" id="'+id+'"></div>';
+  msgDiv.appendChild(wrap);
+  const w=document.getElementById(id);
+  if(pensee)w.innerHTML+=safe('<details class="thought-block"><summary>Raisonnement</summary><div>'+marked.parse(pensee)+'</div></details>');
+  w.innerHTML+=safe('<div class="bubble-bot">'+marked.parse(rep)+'</div>')+'<div class="msg-time">'+heure()+'</div>';
+  msgDiv.scrollTop=msgDiv.scrollHeight;
+}
+
+function qr(q){fermer();input.value=q;envoyer();}
+
+function bienvenue(){
+  const logo='https://www.hau.bi/assets/img/hope/header_logo.png';
+  msgDiv.innerHTML='<div class="welcome-card">'+
+    '<img class="wc-logo" src="'+logo+'" alt="HAU" onerror="this.style.display=\'none\'">'+
+    '<div class="wc-title">HAU Intelligence</div>'+
+    '<div class="wc-sub">Hope Africa University · Université Espoir d\'Afrique</div>'+
+    '<div class="wc-desc">Assistant académique officiel — Bujumbura, Burundi<br>Bilingue Français & English 🇧🇮</div>'+
+    '<div class="quick-grid">'+
+    '<button class="qbtn" onclick="qr(\'Quels sont les programmes disponibles à HAU ?\')"><span class="qbtn-icon">🏛️</span>Programmes</button>'+
+    '<button class="qbtn" onclick="qr(\'Comment s\\\'inscrire à HAU ?\')"><span class="qbtn-icon">📝</span>Inscription</button>'+
+    '<button class="qbtn" onclick="qr(\'Quelles bourses sont disponibles à HAU ?\')"><span class="qbtn-icon">💰</span>Bourses</button>'+
+    '<button class="qbtn" onclick="qr(\'Comment rédiger un mémoire académique ?\')"><span class="qbtn-icon">✍️</span>Mémoire</button>'+
+    '<button class="qbtn" onclick="qr(\'Règlement intérieur de HAU\')"><span class="qbtn-icon">📋</span>Règlement</button>'+
+    '<button class="qbtn" onclick="qr(\'Vie estudiantine et clubs à HAU\')"><span class="qbtn-icon">🎭</span>Vie Campus</button>'+
+    '<button class="qbtn" onclick="ouvrirPanel()"><span class="qbtn-icon">🖼️</span>Analyser image</button>'+
+    '<button class="qbtn" onclick="qr(\'Histoire et mission de Hope Africa University\')"><span class="qbtn-icon">ℹ️</span>À propos</button>'+
+    '</div></div>';
+}
+
+// ===== IMAGE PANEL =====
+let panelFile=null,panelBase64=null,panelMime=null,panelResult='';
+function ouvrirPanel(){fermer();document.getElementById('img-panel').classList.add('open');}
+function fermerPanel(){document.getElementById('img-panel').classList.remove('open');}
+
+const dz=document.getElementById('drop-zone');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over');});
+dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f)chargerFichierPanel(f);});
+
+function onPanelFile(inp){if(inp.files[0])chargerFichierPanel(inp.files[0]);}
+
+function chargerFichierPanel(f){
+  // FIX 12 — Vérification taille et type MIME avant lecture
+  if(!f.type.startsWith('image/')){
+    alert('Fichier non supporté. Veuillez choisir une image.');return;
+  }
+  if(f.size>MAX_IMAGE_SIZE){
+    alert('Image trop grande (max 4 Mo). Veuillez choisir une image plus petite.');return;
+  }
+  panelFile=f;panelMime=f.type;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    panelBase64=e.target.result.split(',')[1];
+    document.getElementById('ip-img').src=e.target.result;
+    // FIX 13 — escHtml sur le nom de fichier (peut contenir des caractères spéciaux)
+    document.getElementById('ip-img-info').textContent=f.name+' · '+(f.size/1024).toFixed(1)+' KB';
+    document.getElementById('ip-preview').classList.add('show');
+    document.getElementById('drop-zone').style.display='none';
+    document.getElementById('ip-result').classList.remove('show');
+    panelResult='';
+  };
+  // FIX 14 — gestion d'erreur sur FileReader
+  reader.onerror=()=>alert('Impossible de lire le fichier.');
+  reader.readAsDataURL(f);
+}
+
+function resetPanel(){
+  panelFile=panelBase64=panelMime=null;panelResult='';
+  document.getElementById('ip-preview').classList.remove('show');
+  document.getElementById('drop-zone').style.display='';
+  document.getElementById('ip-result').classList.remove('show');
+  document.getElementById('ip-prompt').value='';
+  document.getElementById('panel-file').value='';
+  document.querySelectorAll('.ip-shortcut').forEach(b=>b.classList.remove('active'));
+}
+
+function setShortcut(btn,text){
+  document.querySelectorAll('.ip-shortcut').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('ip-prompt').value=text;
+}
+
+async function lancerAnalyse(){
+  if(!panelBase64)return;
+  // FIX 15 — ?? au lieu de || (évite d'ignorer un prompt qui serait "0")
+  const prompt=(document.getElementById('ip-prompt').value.trim())
+    ||(langue==='fr'?'Analyse ce document de façon professionnelle et détaillée.':'Analyze this document professionally and in detail.');
+  const btn=document.getElementById('ip-analyze-btn');
+  btn.disabled=true;btn.innerHTML='<div class="spinner"></div><span>Analyse en cours...</span>';
+  document.getElementById('ip-result').classList.remove('show');
+  try{
+    const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},
+      body:JSON.stringify({
+        model:'meta-llama/llama-4-scout-17b-16e-instruct',
+        messages:[{role:'user',content:[
+          {type:'text',text:prompt+'\n\nRéponds en '+(langue==='fr'?'français':'anglais')+' de façon structurée et académique.'},
+          {type:'image_url',image_url:{url:'data:'+panelMime+';base64,'+panelBase64}}
+        ]}],
+        max_tokens:2000
+      })
+    });
+    const data=await res.json();
+    // FIX 16 — Vérification robuste de la réponse API
+    const choix=data.choices&&data.choices[0]&&data.choices[0].message;
+    if(choix&&choix.content){
+      panelResult=choix.content;
+      document.getElementById('ip-result-content').innerHTML=safe(marked.parse(panelResult));
+      document.getElementById('ip-result').classList.add('show');
+    }else{
+      const msg=data.error?.message||'Réponse invalide de l\'API';
+      document.getElementById('ip-result-content').innerHTML='<p style="color:#ff6b6b">Erreur : '+escHtml(msg)+'</p>';
+      document.getElementById('ip-result').classList.add('show');
+    }
+  }catch(e){
+    document.getElementById('ip-result-content').innerHTML='<p style="color:#ff6b6b">Erreur de connexion. Vérifiez votre réseau.</p>';
+    document.getElementById('ip-result').classList.add('show');
+  }
+  btn.disabled=false;btn.innerHTML='<span>🔬 Analyser avec HAU IA</span>';
+}
+
+function envoyerResultatChat(){
+  if(!panelResult||!panelBase64)return;
+  fermerPanel();
+  const promptTexte=document.getElementById('ip-prompt').value||'Analyse image';
+  // FIX 17 — on n'appelle plus addBot() ici (il serait appelé en double).
+  //           On ajoute les messages à historique puis on affiche proprement.
+  const d=document.createElement('div');d.className='msg-user';
+  d.innerHTML='<div class="bubble-user"><img class="analyzed-img" src="data:'+panelMime+';base64,'+panelBase64+'"><br>'+escHtml(promptTexte)+'</div><div class="msg-time">'+heure()+'</div>';
+  msgDiv.appendChild(d);msgDiv.scrollTop=msgDiv.scrollHeight;
+  historique.push({role:'user',content:promptTexte});
+  historique.push({role:'assistant',content:panelResult});
+  addBot(panelResult);
+  sauvegarderSession(promptTexte);
+}
+
+function copierResultat(){
+  if(!panelResult)return;
+  navigator.clipboard.writeText(panelResult).then(()=>{
+    const btn=document.getElementById('copy-btn');
+    const orig=btn.textContent;btn.textContent='✅ Copié !';
+    setTimeout(()=>btn.textContent=orig,2000);
+  }).catch(()=>alert('Impossible de copier.'));
+}
+
+// FIX 18 — sauvegarderSession() refactorisée
+// Crée une nouvelle session si aucune n'est active, sinon met à jour la session courante.
+function sauvegarderSession(texteQuestion){
+  if(!historique.length)return;
+  const titreSource=texteQuestion||(historique.find(m=>m.role==='user')?.content)||'Discussion';
+  const titre=titreSource.substring(0,28)+(titreSource.length>28?'...':'');
+  const dateStr=new Date().toLocaleDateString('fr-FR');
+
+  if(currentSessionIndex===-1){
+    // Nouvelle session
+    sessions.push({titre,date:dateStr,messages:[...historique]});
+    currentSessionIndex=sessions.length-1;
+  }else{
+    // Mise à jour de la session existante
+    sessions[currentSessionIndex].messages=[...historique];
+  }
+  localStorage.setItem('hau_sessions',JSON.stringify(sessions));
+  affSessions();
+}
+
+function detectImg(t){
+  return['génère','generate','dessine','create','imagine','draw','peins','fais une image']
+    .some(m=>t.toLowerCase().includes(m));
+}
+
+async function genererImage(prompt){
+  // FIX 19 — addUser() est appelé AVANT de lancer la génération (ordre logique)
+  addUser(prompt);
+  historique.push({role:'user',content:prompt});
+  typingText.innerText="Génération de l'image...";typing.style.display='flex';
+  const clean=prompt
+    .replace(/génère|generate|dessine|create|imagine|draw|peins|fais une image/gi,'')
+    .replace(/une image de|an image of|une photo de/gi,'')
+    .trim();
+  const url='https://image.pollinations.ai/prompt/'
+    +encodeURIComponent(clean+', professional, academic, university, high quality, detailed')
+    +'?width=1024&height=1024&nologo=true&model=flux';
+  typing.style.display='none';
+  const logo='https://www.hau.bi/assets/img/hope/header_logo.png';
+  const wrap=document.createElement('div');wrap.className='msg-bot';
+  const safeClean=escHtml(clean);
+  // FIX 20 — onerror sur l'image générée pour signaler un échec
+  wrap.innerHTML='<img class="hau-av" src="'+logo+'" alt="HAU" onerror="this.style.background=\'#1e6b3c\'">'
+    +'<div class="bot-wrap"><div class="gen-img-wrap">'
+    +'<div class="gen-img-label">✦ Image générée par HAU IA</div>'
+    +'<img class="gen-img" src="'+url+'" loading="lazy" '
+    +'onclick="window.open(\''+url+'\',\'_blank\')" alt="'+safeClean+'" '
+    +'onerror="this.outerHTML=\'<p style=&quot;color:#ff6b6b;font-size:13px&quot;>⚠️ Génération échouée. Réessayez.</p>\'">'
+    +'<div class="img-actions">'
+    +'<a class="img-btn" href="'+url+'" download="HAU-IA.png" target="_blank">⬇ Télécharger</a>'
+    +'<a class="img-btn" href="'+url+'" target="_blank">🔍 Plein écran</a>'
+    +'</div></div>'
+    +'<div class="msg-time">'+heure()+'</div></div>';
+  msgDiv.appendChild(wrap);msgDiv.scrollTop=msgDiv.scrollHeight;
+  historique.push({role:'assistant',content:'[Image: '+clean+']'});
+  sauvegarderSession(prompt);
+}
+
+// FIX 21 — Verrou d'envoi pour éviter les doubles soumissions
+let envoiEnCours=false;
+
+async function envoyer(){
+  const texte=input.value.trim();
+  if(!texte||envoiEnCours)return;
+  envoiEnCours=true;
+  input.value='';
+  if(detectImg(texte)){await genererImage(texte);envoiEnCours=false;return;}
+  addUser(texte);historique.push({role:'user',content:texte});
+  typingText.innerText='HAU Intelligence réfléchit...';typing.style.display='flex';
+  try{
+    // Fallback automatique si un modèle est rate-limité
+    const MODELES=['llama3-70b-8192','llama-3.1-8b-instant','gemma2-9b-it','mixtral-8x7b-32768'];
+    async function appelGroq(messages){
+      for(const modele of MODELES){
+        const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},
+          body:JSON.stringify({model:modele,messages,max_tokens:4000,temperature:0.45})
+        });
+        const d=await r.json();
+        if(d.error&&(d.error.code==='rate_limit_exceeded'||d.error.type==='rate_limit_error')){
+          console.warn('Rate limit sur '+modele+', passage au suivant...');continue;
+        }
+        return d;
+      }
+      throw new Error('Tous les modèles sont temporairement saturés.');
+    }
+    const res=await appelGroq([
+          {role:'system',content:'Tu es HAU Intelligence, l\'assistant académique officiel de Hope Africa University (HAU) — Université Espoir d\'Afrique, une université chrétienne privée à Bujumbura, Burundi.\n\nINFORMATIONS OFFICIELLES HAU :\n- Fondée en 2000 par le Rév. Elie Buconyori\n- Recteur : Rév. Dr Col de Police Servilien Nitunga\n- Affiliée à l\'Église Méthodiste Libre\n- Campus : Ngagara (principal), Gishingano, Gitega\n- Contact : info@hau.bi | (+257) 22237973 | hau.bi\n- Accréditation : Ministère de l\'Enseignement Supérieur du Burundi\n\nFACULTÉS & PROGRAMMES :\n- Médecine générale, Soins infirmiers, Anesthésie, Dentisterie\n- Droit, Sciences politiques\n- Sciences économiques, Administration des affaires, MBA\n- Informatique, Génie civil, Ingénierie\n- Théologie, Bible\n- Communication, Travail social, Psychologie\n- Agriculture, Entrepreneuriat\n\nSERVICES EN LIGNE : E-Learning (edu.hau.bi), MIS (mis.hau.bi), Journal académique (journal.hau.bi), Bibliothèque (stumis.hau.bi)\n\nLANGUE DE RÉPONSE : '+(langue==='fr'?'FRANÇAIS':'ENGLISH')+'\n\nTES CAPACITÉS :\n1. Répondre aux questions sur HAU et l\'académique\n2. Rédiger mémoires, dissertations, rapports\n3. Analyser des documents et photos\n4. Informer sur inscriptions, frais, bourses\n5. Générer emplois du temps et planning\n6. Orienter étudiants et candidats\n7. Aider dans toutes les matières universitaires\n8. Recherche scientifique et publications\n\nSois professionnel, précis et bienveillant.'},
+          ...historique
+        ],
+    ]);
+    const data=res;
+    // FIX 22 — Vérification robuste : on accède à choices[0] seulement s'il existe
+    const choix=data.choices&&data.choices[0]&&data.choices[0].message;
+    if(!choix||!choix.content){
+      const msg=data.error?.message||'Réponse invalide.';
+      typing.style.display='none';
+      addBot('⚠️ Erreur API : '+escHtml(msg));
+    }else{
+      const rep=choix.content;
+      historique.push({role:'assistant',content:rep});
+      typing.style.display='none';
+      addBot(rep);
+      sauvegarderSession(texte);
+    }
+  }catch(e){
+    typing.style.display='none';
+    addBot('Connexion interrompue. Veuillez réessayer.');
+  }
+  envoiEnCours=false;
+}
+
+input.addEventListener('keypress',e=>{if(e.key==='Enter'&&!e.shiftKey)envoyer();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')fermerPanel();});
+
+affSessions();
+bienvenue();
+</script>
+</body>
+</html>
