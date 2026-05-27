@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -120,11 +121,11 @@
         #send-btn{background:linear-gradient(135deg,var(--green),var(--green2));color:white;border-radius:10px;width:36px;height:36px;font-size:16px;}
         #file-input{display:none;}
         ::-webkit-scrollbar{width:2px;}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
- 
+
         /* Erreur message */
         .error-box{background:#1a0a0a;border:1px solid #ff4a4a44;border-radius:10px;padding:12px 16px;color:#ff6b6b;font-size:13px;line-height:1.5;}
         .error-box a{color:var(--green3);}
- 
+
         @media(max-width:900px){
             body{flex-direction:column;}
             #sidebar{position:fixed;top:0;left:-290px;bottom:0;width:290px;height:100%;height:-webkit-fill-available;transition:left 0.3s cubic-bezier(0.4,0,0.2,1);}
@@ -204,14 +205,14 @@
     // ===== MANIFEST PWA =====
     const mf={name:"HAU Intelligence",short_name:"HAU IA",start_url:window.location.href,display:"standalone",orientation:"portrait-primary",background_color:"#060d1a",theme_color:"#1e6b3c",icons:[{src:"https://www.hau.bi/assets/img/hope/header_logo.png",sizes:"192x192",type:"image/png",purpose:"any maskable"},{src:"https://www.hau.bi/assets/img/hope/header_logo.png",sizes:"512x512",type:"image/png",purpose:"any maskable"}]};
     document.getElementById('pwa-manifest').href="data:application/manifest+json,"+encodeURIComponent(JSON.stringify(mf));
- 
+
     // ===== CLE API — REMPLACEZ PAR UNE NOUVELLE CLE SUR console.groq.com =====
-    const GROQ_KEY = "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";
+    const GROQ_KEY = "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";
     // =========================================================================
- 
+
     let langue = localStorage.getItem('hau_langue') || 'fr';
     document.getElementById('lang-btn').innerText = '🌍 ' + langue.toUpperCase();
- 
+
     // ===== PWA INSTALL =====
     let installPrompt = null;
     window.addEventListener('beforeinstallprompt', e => {
@@ -241,7 +242,7 @@
             navigator.clipboard.writeText(lien).then(() => { alert('✅ Lien copié !'); });
         }
     }
- 
+
     function changerLangue() {
         langue = langue === 'fr' ? 'en' : 'fr';
         localStorage.setItem('hau_langue', langue);
@@ -249,7 +250,7 @@
         document.getElementById('msg-input').placeholder = langue === 'fr' ? 'Posez votre question...' : 'Ask your question...';
         addBot(langue === 'fr' ? '✅ Langue changée en **Français**.' : '✅ Language changed to **English**.');
     }
- 
+
     function telecharger() {
         try {
             const blob = new Blob([`<!DOCTYPE html>\n${document.documentElement.outerHTML}`], {type: 'text/html;charset=utf-8'});
@@ -258,27 +259,27 @@
             document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
         } catch(e) { alert('Erreur téléchargement.'); }
     }
- 
+
     // ===== SIDEBAR =====
     const sidebar = document.getElementById('sidebar');
     function ouvrir() { sidebar.classList.add('open'); document.getElementById('overlay').classList.add('open'); }
     function fermer() { sidebar.classList.remove('open'); document.getElementById('overlay').classList.remove('open'); }
- 
+
     // ===== MARKED =====
     marked.setOptions({gfm: true, breaks: true});
- 
+
     const msgDiv = document.getElementById('messages');
     const input = document.getElementById('msg-input');
     const typing = document.getElementById('typing');
     const typingText = document.getElementById('typing-text');
     const histDiv = document.getElementById('historique');
- 
+
     let historique = [];
     let sessions = JSON.parse(localStorage.getItem('hau_sessions') || '[]');
     let fichierJoint = null, fichierBase64 = null;
- 
+
     function heure() { return new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'}); }
- 
+
     function affSessions() {
         histDiv.innerHTML = '';
         sessions.slice().reverse().forEach((s, i) => {
@@ -286,12 +287,12 @@
             histDiv.innerHTML += `<div class="session" onclick="charger(${idx});fermer();">💬<div class="sess-inner"><div class="sess-title">${s.titre}</div><div class="sess-date">${s.date || ''}</div></div></div>`;
         });
     }
- 
+
     function charger(i) {
         historique = sessions[i].messages; msgDiv.innerHTML = '';
         historique.forEach(m => { if (m.role === 'user') addUser(m.content); if (m.role === 'assistant') addBot(m.content); });
     }
- 
+
     function nouveau() {
         if (historique.length > 0) {
             const p = historique.find(m => m.role === 'user');
@@ -300,12 +301,12 @@
         }
         historique = []; msgDiv.innerHTML = ''; bienvenue();
     }
- 
+
     function addUser(texte) {
         msgDiv.innerHTML += `<div class="msg-user"><div class="bubble-user">${texte}</div><div class="msg-time">${heure()}</div></div>`;
         msgDiv.scrollTop = msgDiv.scrollHeight;
     }
- 
+
     function addBot(contenu) {
         let pensee = '', rep = contenu;
         if (contenu.includes('<thought>') && contenu.includes('</thought>')) {
@@ -320,16 +321,16 @@
         w.innerHTML += `<div class="bubble-bot">${marked.parse(rep)}</div><div class="msg-time">${heure()}</div>`;
         msgDiv.scrollTop = msgDiv.scrollHeight;
     }
- 
+
     function addErreur(msg) {
         const logo = 'https://www.hau.bi/assets/img/hope/header_logo.png';
         const id = 'e' + Date.now();
         msgDiv.innerHTML += `<div class="msg-bot"><img class="hau-av" src="${logo}" alt="HAU" onerror="this.style.background='#1e6b3c'"><div class="bot-wrap"><div class="error-box">${msg}</div><div class="msg-time">${heure()}</div></div></div>`;
         msgDiv.scrollTop = msgDiv.scrollHeight;
     }
- 
+
     function qr(q) { fermer(); input.value = q; envoyer(); }
- 
+
     function bienvenue() {
         const logo = 'https://www.hau.bi/assets/img/hope/header_logo.png';
         msgDiv.innerHTML = `
@@ -350,7 +351,7 @@
             </div>
         </div>`;
     }
- 
+
     // ===== FICHIER IMAGE =====
     function gererFichier(inp) {
         if (inp.files && inp.files[0]) {
@@ -365,13 +366,13 @@
             reader.readAsDataURL(fichierJoint);
         }
     }
- 
+
     function retirerFichier() {
         fichierJoint = null; fichierBase64 = null;
         document.getElementById('file-input').value = '';
         document.getElementById('file-preview').style.display = 'none';
     }
- 
+
     // ===== ANALYSE IMAGE =====
     async function analyserImage(texte, b64, mime) {
         typingText.innerText = 'Analyse du document...'; typing.style.display = 'flex';
@@ -411,11 +412,11 @@
             addErreur('🌐 Connexion impossible. Vérifiez votre internet et réessayez.');
         }
     }
- 
+
     function detectImg(t) {
         return ['génère','generate','dessine','create','imagine','draw','peins','fais une image'].some(m => t.toLowerCase().includes(m));
     }
- 
+
     // ===== GÉNÉRATION IMAGE =====
     async function genererImage(prompt) {
         typingText.innerText = "Génération de l'image..."; typing.style.display = 'flex';
@@ -430,7 +431,7 @@
         historique.push({role: 'assistant', content: `[Image: ${clean}]`});
         sauvegarder(prompt);
     }
- 
+
     function sauvegarder(texte) {
         if (historique.length === 2) {
             sessions.push({titre: texte.substring(0,25)+'...', date: new Date().toLocaleDateString('fr-FR'), messages: historique});
@@ -440,13 +441,13 @@
             localStorage.setItem('hau_sessions', JSON.stringify(sessions));
         }
     }
- 
+
     // ===== ENVOI MESSAGE =====
     async function envoyer() {
         const texte = input.value.trim();
         if (!texte && !fichierJoint) return;
         input.value = '';
- 
+
         // Image jointe
         if (fichierJoint && fichierBase64) {
             const b64 = fichierBase64.split(',')[1], mime = fichierJoint.type;
@@ -456,14 +457,14 @@
             await analyserImage(texte, b64, mime);
             return;
         }
- 
+
         // Génération image
         if (detectImg(texte)) { await genererImage(texte); return; }
- 
+
         addUser(texte);
         historique.push({role: 'user', content: texte});
         typingText.innerText = 'HAU Intelligence réfléchit...'; typing.style.display = 'flex';
- 
+
         try {
             const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                 method: 'POST',
@@ -484,9 +485,9 @@ Sois professionnel, précis et bienveillant. Utilise <thought></thought> si néc
                     temperature: 0.45
                 })
             });
- 
+
             typing.style.display = 'none';
- 
+
             if (!res.ok) {
                 const err = await res.json().catch(() => ({}));
                 historique.pop(); // retirer le message user qui n'a pas eu de réponse
@@ -501,7 +502,7 @@ Sois professionnel, précis et bienveillant. Utilise <thought></thought> si néc
                 }
                 return;
             }
- 
+
             const data = await res.json();
             if (data.choices && data.choices[0]) {
                 const rep = data.choices[0].message.content;
@@ -516,7 +517,7 @@ Sois professionnel, précis et bienveillant. Utilise <thought></thought> si néc
             addErreur('🌐 <strong>Connexion interrompue.</strong><br>Vérifiez votre connexion internet et réessayez.');
         }
     }
- 
+
     input.addEventListener('keypress', e => { if (e.key === 'Enter' && !e.shiftKey) envoyer(); });
     affSessions();
     bienvenue();
