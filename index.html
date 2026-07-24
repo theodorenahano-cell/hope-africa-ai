@@ -26,6 +26,34 @@
   --gold3:      #F5C96A;
   --goldA12:    rgba(200,144,42,0.12);
   --goldA06:    rgba(200,144,42,0.06);
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="HAU Assistant"/>
+<meta name="theme-color" content="#03080F"/>
+<title>Assistant IA — Hope Africa University</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+ 
+:root{
+  --ink:        #03080F;
+  --ink2:       #060E1A;
+  --ink3:       #091525;
+  --panel:      #070F1C;
+  --surface:    #0B1627;
+  --lift:       #0F1E35;
+  --gold:       #C8902A;
+  --gold2:      #E2AA48;
+  --gold3:      #F5C96A;
+  --goldA12:    rgba(200,144,42,0.12);
+  --goldA06:    rgba(200,144,42,0.06);
   --goldA30:    rgba(200,144,42,0.30);
   --body:       #A8BDD6;
   --body2:      #C8DCF2;
@@ -594,18 +622,44 @@ body::after{
       <button class="role-btn active" onclick="setRole('etudiant',this)">
         <span class="role-icon">🎓</span>Étudiant(e)
       </button>
-      <button class="role-btn" onclick="setRole('admin',this)">
-        <span class="role-icon">🏛️</span>Admin
-      </button>
-      <button class="role-btn" onclick="setRole('enseignant',this)">
-        <span class="role-icon">📚</span>Enseignant
+      <button class="role-btn" onclick="setRole('personnel',this)">
+        <span class="role-icon">🏛️</span>Personnel / Administration
       </button>
     </div>
  
-    <div class="login-field">
-      <label class="login-label">Identifiant / Matricule</label>
-      <input class="login-input" id="login-user" type="text" placeholder="ex: etudiant, admin, demo…" autocomplete="username"/>
+    <div class="login-field" id="field-fonction" style="display:none">
+      <label class="login-label">Fonction</label>
+      <select class="login-input" id="login-fonction">
+        <option value="recteur">Recteur</option>
+        <option value="vicerecteur">Vice-Recteur</option>
+        <option value="secretairegeneral">Secrétaire Général</option>
+        <option value="doyen">Doyen</option>
+        <option value="vicedoyen">Vice-Doyen</option>
+        <option value="chefdepartement">Chef de Département</option>
+        <option value="directeuracademique">Directeur Académique</option>
+        <option value="directeurfinancier">Directeur Administratif et Financier</option>
+        <option value="responsableadmissions">Responsable des Admissions</option>
+        <option value="responsableinformatique">Responsable Informatique (DSI)</option>
+        <option value="chefpersonnel">Chef du Personnel</option>
+        <option value="aumonier">Aumônier</option>
+        <option value="responsablecommunication">Responsable Communication</option>
+        <option value="comptable">Comptable</option>
+        <option value="bibliothecaire">Bibliothécaire</option>
+        <option value="secretariat">Secrétariat</option>
+        <option value="enseignant">Enseignant</option>
+      </select>
     </div>
+ 
+    <div class="login-field">
+      <label class="login-label">Identifiant (nom suivi de @hau)</label>
+      <input class="login-input" id="login-user" type="text" placeholder="ex: jean@hau" autocomplete="username"/>
+    </div>
+ 
+    <div class="login-field" id="field-phone" style="display:none">
+      <label class="login-label">Numéro de téléphone</label>
+      <input class="login-input" id="login-phone" type="tel" placeholder="ex: +257 79 000 000"/>
+    </div>
+ 
     <div class="login-field">
       <label class="login-label">Mot de passe</label>
       <input class="login-input" id="login-pass" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
@@ -615,10 +669,10 @@ body::after{
     <div id="login-err"></div>
  
     <div class="login-hint">
-      <strong>Comptes de démonstration :</strong><br>
-      Étudiant → <code>etudiant</code> / <code>hau2025</code><br>
-      Admin → <code>admin</code> / <code>hau2025</code><br>
-      Demo → <code>demo</code> / <code>demo</code>
+      <strong>Format des identifiants :</strong><br>
+      Étudiant(e) → identifiant : <code>nom@hau</code> / mot de passe : <code>2000@hau</code><br>
+      Personnel → identifiant : <code>nom@hau</code> / mot de passe : <code>2000</code>+fonction+<code>@hau</code><br>
+      (ex : Chef de Département → <code>2000chefdepartement@hau</code>)
     </div>
  
     <div id="login-footer-txt">
@@ -851,46 +905,66 @@ const SK='hau_pro_v2';
 /* ══════════════════════════════════════
    AUTH & LOGIN SYSTEM
 ══════════════════════════════════════ */
-const USERS={
-  'admin':       {pass:'hau2025',     role:'admin',      display:'Admin HAU'},
-  'recteur':     {pass:'recteur2025', role:'admin',      display:'Rectorat HAU'},
-  'secretariat': {pass:'secr2025',    role:'admin',      display:'Secrétariat'},
-  'etudiant':    {pass:'hau2025',     role:'etudiant',   display:'Étudiant(e)'},
-  'etu001':      {pass:'etu001',       role:'etudiant',   display:'Étudiant 001'},
-  'professeur':  {pass:'prof2025',    role:'enseignant', display:'Prof. HAU'},
-  'enseignant':  {pass:'hau2025',     role:'enseignant', display:'Enseignant(e)'},
-  'demo':        {pass:'demo',         role:'etudiant',   display:'Démo'},
-};
- 
 let currentUser=null;
 let loginRole='etudiant';
+ 
+// Mot de passe fixe pour tous les étudiants
+const STUDENT_PASSWORD='2000@hau';
+ 
+function slugify(s){
+  return String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .toLowerCase().replace(/[^a-z0-9]+/g,'');
+}
+function capitalize(s){
+  return String(s).trim().split(/\s+/).map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ');
+}
  
 function setRole(r,btn){
   loginRole=r;
   document.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
+  const isPersonnel=(r==='personnel');
+  document.getElementById('field-fonction').style.display=isPersonnel?'block':'none';
+  document.getElementById('field-phone').style.display=isPersonnel?'block':'none';
 }
  
 function doLogin(){
-  const u=document.getElementById('login-user').value.trim().toLowerCase();
-  const p=document.getElementById('login-pass').value;
+  const uRaw=document.getElementById('login-user').value.trim();
+  const p=document.getElementById('login-pass').value.trim();
   const err=document.getElementById('login-err');
   err.textContent='';
  
-  if(!u||!p){err.textContent='Veuillez remplir tous les champs.';return;}
+  if(!uRaw||!p){err.textContent='Veuillez remplir tous les champs.';return;}
  
-  const found=USERS[u];
-  if(!found||found.pass!==p){
-    err.textContent='❌ Identifiant ou mot de passe incorrect.';
-    document.getElementById('login-pass').value='';
+  const uLow=uRaw.toLowerCase();
+  if(!uLow.endsWith('@hau')){
+    err.textContent='❌ L\'identifiant doit se terminer par "@hau" (ex : jean@hau).';
     return;
   }
+  const nameRaw=uRaw.slice(0,uRaw.length-4).replace(/[@.]+$/,'').trim();
+  const displayName=capitalize(nameRaw||uRaw);
  
-  currentUser={id:u, ...found, loginTime:new Date()};
- 
-  // Track student presence
-  if(found.role==='etudiant'){
-    trackStudentPresence(found.display||u);
+  if(loginRole==='etudiant'){
+    if(p.toLowerCase()!==STUDENT_PASSWORD){
+      err.textContent='❌ Mot de passe incorrect. (Format attendu : 2000@hau)';
+      document.getElementById('login-pass').value='';
+      return;
+    }
+    currentUser={id:uLow, display:displayName, role:'etudiant', fonction:null, phone:null, loginTime:new Date()};
+    trackStudentPresence(displayName);
+  } else {
+    const fonctionSel=document.getElementById('login-fonction');
+    const fonctionSlug=fonctionSel.value;
+    const fonctionLabel=fonctionSel.options[fonctionSel.selectedIndex].text;
+    const phone=document.getElementById('login-phone').value.trim();
+    if(!phone){err.textContent='Veuillez indiquer votre numéro de téléphone.';return;}
+    const expected='2000'+fonctionSlug+'@hau';
+    if(p.toLowerCase()!==expected){
+      err.textContent='❌ Mot de passe incorrect pour la fonction sélectionnée. (Format attendu : 2000'+fonctionSlug+'@hau)';
+      document.getElementById('login-pass').value='';
+      return;
+    }
+    currentUser={id:uLow, display:displayName, role:'personnel', fonction:fonctionLabel, phone, loginTime:new Date()};
   }
  
   // Hide login overlay with animation
@@ -903,13 +977,13 @@ function doLogin(){
   // Enable send button
   document.getElementById('send').disabled=false;
  
-  // Show counter btn for admins
-  if(found.role==='admin'){
+  // Show counter btn for personnel
+  if(currentUser.role==='personnel'){
     document.getElementById('counter-btn').style.display='flex';
   }
  
   updateCounterBtn();
-  toast('Bienvenue, '+found.display+' ! 👋');
+  toast('Bienvenue, '+currentUser.display+' ! 👋');
 }
  
 function showUserBadge(){
@@ -920,8 +994,7 @@ function showUserBadge(){
   const initials=(currentUser.display||currentUser.id).replace(/[^a-zA-ZÀ-ÿ]/g,' ').trim().split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()||'??';
   av.textContent=initials;
   nm.textContent=currentUser.display||currentUser.id;
-  const roles={admin:'Admin',etudiant:'Étudiant',enseignant:'Enseignant'};
-  rt.textContent=roles[currentUser.role]||currentUser.role;
+  rt.textContent=currentUser.role==='etudiant'?'Étudiant':(currentUser.fonction||'Personnel');
   b.style.display='flex';
 }
  
@@ -946,7 +1019,13 @@ function doLogout(){
   overlay.classList.remove('hidden');
   document.getElementById('login-user').value='';
   document.getElementById('login-pass').value='';
+  document.getElementById('login-phone').value='';
   document.getElementById('login-err').textContent='';
+  document.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.role-btn').classList.add('active');
+  document.getElementById('field-fonction').style.display='none';
+  document.getElementById('field-phone').style.display='none';
+  loginRole='etudiant';
   toast('Vous avez été déconnecté(e).');
 }
  
@@ -1436,4 +1515,5 @@ function toggleSidebar(){
 }
 </script>
 </body>
-</
+</html>
+ 
