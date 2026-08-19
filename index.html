@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -573,7 +574,7 @@ body::after{
  
     <div class="login-field">
       <label class="login-label">Adresse e-mail</label>
-      <input class="login-input" id="login-user" type="email" placeholder="ex: jean@gmail.com" autocomplete="username"/>
+      <input class="login-input" id="login-user" type="email" placeholder="vous@gmail.com" autocomplete="username"/>
     </div>
  
     <div class="login-field">
@@ -599,7 +600,7 @@ body::after{
   </div>
 </div>
  
-<!-- ══════ STUDENT COUNTER PANEL ══════ -->
+<!-- ══════ STUDENT COUNTER PANEL (admin only) ══════ -->
 <div id="counter-panel">
   <div id="counter-box">
     <h2>📊 Compteur d'Étudiants</h2>
@@ -675,7 +676,7 @@ body::after{
       <div id="hdr-sub">Université Espoir d'Afrique · Ngagara, Bujumbura · Burundi</div>
     </div>
     <div id="hdr-badges">
-      <!-- Counter btn -->
+      <!-- Admin counter btn -->
       <button id="counter-btn" onclick="openCounter()">
         📊 Étudiants <span class="cb-total">0</span>
       </button>
@@ -807,7 +808,7 @@ body::after{
 /* ══════════════════════════════════════
    STATE
 ══════════════════════════════════════ */
-let apiKey='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', lang='fr', loading=false;
+let apiKey='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', lang='fr', loading=false;
 let history=[], sessId=null;
 const SK='hau_pro_v2';
  
@@ -820,23 +821,30 @@ function capitalize(s){
   return String(s).trim().split(/\s+/).map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ');
 }
  
+function isValidEmail(v){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+}
+ 
 function doLogin(){
-  const uRaw=document.getElementById('login-user').value.trim();
+  const emailRaw=document.getElementById('login-user').value.trim();
   const p=document.getElementById('login-pass').value.trim();
   const err=document.getElementById('login-err');
   err.textContent='';
  
-  if(!uRaw||!p){err.textContent='Veuillez remplir tous les champs.';return;}
- 
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(uRaw)){
+  if(!emailRaw||!p){err.textContent='Veuillez remplir tous les champs.';return;}
+  if(!isValidEmail(emailRaw)){
     err.textContent='❌ Veuillez saisir une adresse e-mail valide.';
     return;
   }
+  if(p.length<4){
+    err.textContent='❌ Le mot de passe doit contenir au moins 4 caractères.';
+    return;
+  }
  
-  const nameRaw=uRaw.split('@')[0].replace(/[._-]+/g,' ').trim();
-  const displayName=capitalize(nameRaw||uRaw);
+  const nameRaw=emailRaw.split('@')[0].replace(/[._-]+/g,' ').trim();
+  const displayName=capitalize(nameRaw||emailRaw);
  
-  currentUser={id:uRaw.toLowerCase(), display:displayName, loginTime:new Date()};
+  currentUser={id:emailRaw.toLowerCase(), display:displayName, role:'etudiant', loginTime:new Date()};
   trackStudentPresence(displayName);
  
   // Hide login overlay with animation
@@ -848,9 +856,6 @@ function doLogin(){
  
   // Enable send button
   document.getElementById('send').disabled=false;
- 
-  // Show counter btn
-  document.getElementById('counter-btn').style.display='flex';
  
   updateCounterBtn();
   toast('Bienvenue, '+currentUser.display+' ! 👋');
@@ -864,7 +869,7 @@ function showUserBadge(){
   const initials=(currentUser.display||currentUser.id).replace(/[^a-zA-ZÀ-ÿ]/g,' ').trim().split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()||'??';
   av.textContent=initials;
   nm.textContent=currentUser.display||currentUser.id;
-  rt.style.display='none';
+  rt.textContent=currentUser.id;
   b.style.display='flex';
 }
  
